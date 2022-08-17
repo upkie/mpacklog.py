@@ -18,12 +18,15 @@ py_library(
     srcs = [
         "async_logger.py",
     ],
+    deps = [
+        ":serialize",
+    ],
 )
 
 py_library(
     name = "python",
     deps = [
-        ":serialize",
+        ":async_logger",
     ],
 )
 
