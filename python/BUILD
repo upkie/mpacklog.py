@@ -25,6 +25,9 @@ py_library(
 
 py_library(
     name = "python",
+    srcs = [
+        "__init__.py",
+    ],
     deps = [
         ":async_logger",
     ],
