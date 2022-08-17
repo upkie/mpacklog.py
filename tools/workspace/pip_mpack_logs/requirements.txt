@@ -1,0 +1,2 @@
+msgpack==1.0.2
+setuptools>=62.0.0
