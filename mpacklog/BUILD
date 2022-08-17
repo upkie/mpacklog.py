@@ -8,7 +8,10 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "circular_buffer",
-    hdrs = ["CircularBuffer.h"],
+    hdrs = [
+        "CircularBuffer.h",
+    ],
+    include_prefix = "mpacklog",
     deps = [
         "@spdlog",
     ],
@@ -16,8 +19,13 @@ cc_library(
 
 cc_library(
     name = "logger",
-    hdrs = ["Logger.h"],
-    srcs = ["Logger.cpp"],
+    hdrs = [
+        "Logger.h",
+    ],
+    include_prefix = "mpacklog",
+    srcs = [
+        "Logger.cpp",
+    ],
     copts = [
         "-pthread",
     ],
