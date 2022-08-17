@@ -2,7 +2,7 @@
 *.out
 bazel-bin
 bazel-out
-bazel-mpack_logs
+bazel-mpacklog
 bazel-testlogs
 build
 coverage
