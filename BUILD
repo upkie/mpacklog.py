@@ -9,11 +9,4 @@ exports_files([
     ".clang-format",
 ])
 
-cc_library(
-    name = "cpp",
-    deps = [
-        "//mpacklog:cpp",
-    ],
-)
-
 add_lint_tests()
