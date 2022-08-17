@@ -28,7 +28,6 @@ cc_library(
         "@palimpsest",
         ":circular_buffer",
     ],
-    include_prefix = "mpack_logs/logging",
 )
 
 cc_library(

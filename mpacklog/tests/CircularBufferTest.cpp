@@ -15,9 +15,9 @@
  */
 
 #include "gtest/gtest.h"
-#include "mpack_logs/CircularBuffer.h"
+#include "mpacklog/CircularBuffer.h"
 
-namespace mpack_logs {
+namespace mpacklog {
 
 TEST(CircularBuffer, PushAndPop) {
   CircularBuffer<double, 10> buffer;
@@ -46,4 +46,4 @@ TEST(CircularBuffer, CannotPushForever) {
   ASSERT_FALSE(buffer.pop(popped));
 }
 
-}  // namespace mpack_logs
+}  // namespace mpacklog

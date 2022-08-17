@@ -21,11 +21,11 @@
  *     License: BSD-2-Clause (see licenses/LICENSE-mc_rtc)
  */
 
-#include "mpack_logs/Logger.h"
+#include "mpacklog/Logger.h"
 
 #include <string>
 
-namespace mpack_logs {
+namespace mpacklog {
 
 Logger::Logger(const std::string &path, bool append) {
   auto flags = std::ofstream::binary;
@@ -77,4 +77,4 @@ void Logger::flush_buffer() {
   }
 }
 
-}  // namespace mpack_logs
+}  // namespace mpacklog

@@ -10,7 +10,7 @@ exports_files([
 ])
 
 cc_library(
-    name = "mpack_logs",
+    name = "mpacklog",
     deps = [
         ":dictionary",
     ],

@@ -18,10 +18,10 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "mpack_logs/Logger.h"
+#include "mpacklog/Logger.h"
 
-namespace mpack_logs::logging {
+namespace mpacklog::logging {
 
 TEST(Logger, Foo) { Logger logger("test.log"); }
 
-}  // namespace mpack_logs::logging
+}  // namespace mpacklog::logging

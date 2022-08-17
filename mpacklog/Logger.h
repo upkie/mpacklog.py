@@ -31,10 +31,10 @@
 #include <utility>
 #include <vector>
 
-#include "mpack_logs/CircularBuffer.h"
+#include "mpacklog/CircularBuffer.h"
 
 //! Log action and observation dictionaries to MessagePack binary files.
-namespace mpack_logs {
+namespace mpacklog {
 
 using palimpsest::Dictionary;
 
@@ -136,4 +136,4 @@ class Logger {
   size_t last_write_size_ = 0;
 };
 
-}  // namespace mpack_logs
+}  // namespace mpacklog
