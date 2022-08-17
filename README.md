@@ -17,12 +17,11 @@ Call a [git\_repository](https://bazel.build/rules/lib/repo/git#git_repository) 
 ```python
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
-def mpacklog_repository():
-    git_repository(
-        name = "mpacklog",
-        remote = "https://github.com/stephane-caron/mpacklog.git",
-        tag = "v1.0.0",
-    )
+git_repository(
+    name = "mpacklog",
+    remote = "https://github.com/stephane-caron/mpacklog.git",
+    tag = "v1.0.0",
+)
 ```
 
 You can then use the ``@mpacklog:cpp`` dependency in your C++ targets.
