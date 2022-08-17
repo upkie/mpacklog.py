@@ -26,7 +26,7 @@ def mpacklog_repository():
     )
 ```
 
-You can then use the ``@mpacklog//mpacklog:cpp`` dependency in your C++ targets.
+You can then use the ``@mpacklog:cpp`` dependency in your C++ targets.
 
 ## Usage
 
