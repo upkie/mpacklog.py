@@ -1,5 +1,10 @@
 # mpacklog
 
+[![Build](https://img.shields.io/github/workflow/status/stephane-caron/mpacklog/Bazel)](https://github.com/stephane-caron/mpacklog/actions)
+[![Coverage](https://coveralls.io/repos/github/stephane-caron/mpacklog/badge.svg?branch=main)](https://coveralls.io/github/stephane-caron/mpacklog?branch=main)
+![C++ version](https://img.shields.io/badge/C++-17/20-blue.svg?style=flat)
+[![Release](https://img.shields.io/github/v/release/stephane-caron/mpacklog.svg?sort=semver)](https://github.com/stephane-caron/palimpsest/releases)
+
 Log dictionaries to file using the MessagePack serialization format.
 
 ## Installation
