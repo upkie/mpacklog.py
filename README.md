@@ -24,11 +24,14 @@ git_repository(
 )
 ```
 
-You can then use the ``@mpacklog//cpp`` dependency in your C++ targets.
+You can then use the following dependencies:
+
+- ``@mpacklog//cpp`` for C++ targets
+- ``@mpacklog//python`` for Python targets
 
 ## Usage
 
-### C++ Logger
+### C++
 
 ```cpp
 #include <mpacklog/Logger.h>
@@ -45,4 +48,26 @@ int main()
         logger.write(dict):
     }
 }
+```
+
+### Python (asynchronous)
+
+```python
+import asyncio
+from mpacklog.python import AsyncLogger
+
+async def main(logger):
+    for bar in range(1000):
+        await asyncio.sleep(1e-3)  # main's real task
+        await logger.put({"foo": bar, "something": "else"})
+
+async def main_with_logging():
+    logger = AsyncLogger("output.mpack")
+    await asyncio.gather(
+        main(logger),
+        logger.write(),  # runs when main is idle
+    )
+
+if __name__ == "__main__":
+    asyncio.run(main_with_logging())
 ```
