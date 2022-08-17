@@ -11,7 +11,7 @@ Log dictionaries to file using the MessagePack serialization format.
 
 ### Bazel
 
-Call a [git\_repository](https://bazel.build/rules/lib/repo/git#git_repository) rule from your Bazel ``WORKSPACE``:
+Call a [git\_repository](https://bazel.build/rules/lib/repo/git#git_repository) rule in your Bazel ``WORKSPACE``:
 
 ```python
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
@@ -29,7 +29,7 @@ You can then use the ``@mpacklog//mpacklog:cpp`` dependency in your C++ targets.
 
 ## Usage
 
-### C++ logger
+### C++ Logger
 
 ```cpp
 #include <mpacklog/Logger.h>
@@ -43,7 +43,6 @@ int main()
         palimpsest::Dictionary dict;
         dict("foo") = bar;
         dict("something") = "else";
-
         logger.write(dict):
     }
 }
