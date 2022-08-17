@@ -21,7 +21,7 @@
  *     License: BSD-2-Clause (see licenses/LICENSE-mc_rtc)
  */
 
-#include "mpacklog/Logger.h"
+#include "cpp/Logger.h"
 
 #include <string>
 
