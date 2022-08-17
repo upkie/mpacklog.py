@@ -12,13 +12,30 @@ cc_library(
     deps = [
         "@spdlog",
     ],
-    include_prefix = "vulp/utils",
 )
 
 cc_library(
-    name = "utils",
+    name = "logger",
+    hdrs = ["Logger.h"],
+    srcs = ["Logger.cpp"],
+    copts = [
+        "-pthread",
+    ],
+    linkopts = [
+        "-pthread",
+    ],
+    deps = [
+        "@palimpsest",
+        ":circular_buffer",
+    ],
+    include_prefix = "mpack_logs/logging",
+)
+
+cc_library(
+    name = "cpp",
     deps = [
         ":circular_buffer",
+        ":logger",
     ],
 )
 

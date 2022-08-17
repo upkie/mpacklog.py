@@ -27,7 +27,7 @@
 
 #include <atomic>
 
-namespace vulp::utils {
+namespace mpack_logs {
 
 /** Lock-free, thread-safe, single-producer single-consumer circular buffer.
  *
@@ -106,4 +106,4 @@ struct CircularBuffer {
   std::atomic_size_t tail_;
 };
 
-}  // namespace vulp::utils
+}  // namespace mpack_logs

@@ -15,9 +15,9 @@
  */
 
 #include "gtest/gtest.h"
-#include "vulp/utils/CircularBuffer.h"
+#include "mpack_logs/CircularBuffer.h"
 
-namespace vulp::utils {
+namespace mpack_logs {
 
 TEST(CircularBuffer, PushAndPop) {
   CircularBuffer<double, 10> buffer;
@@ -46,4 +46,4 @@ TEST(CircularBuffer, CannotPushForever) {
   ASSERT_FALSE(buffer.pop(popped));
 }
 
-}  // namespace vulp::utils
+}  // namespace mpack_logs

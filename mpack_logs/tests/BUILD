@@ -13,7 +13,7 @@ cc_test(
         "*.h",
     ]),
     deps = [
-        "//utils",
+        "//mpack_logs:cpp",
         "@eigen",
         "@googletest//:main",
     ],
