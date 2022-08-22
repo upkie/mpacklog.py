@@ -33,6 +33,8 @@ You can then use the following dependencies:
 
 ### C++
 
+The C++ implementation uses multi-threading. Add messages to the log using the `put` function, they will be written to file in the background.
+
 ```cpp
 #include <mpacklog/Logger.h>
 #include <palimpsest/Dictionary.h>
@@ -45,12 +47,14 @@ int main()
         palimpsest::Dictionary dict;
         dict("foo") = bar;
         dict("something") = "else";
-        logger.write(dict):
+        logger.put(dict):
     }
 }
 ```
 
-### Python (asynchronous)
+### Python
+
+The Python implementation uses asynchronous I/O. Add messages to the log using the `put` function, write them to file in the separate `write` coroutine.
 
 ```python
 import asyncio
@@ -58,14 +62,14 @@ from mpacklog.python import AsyncLogger
 
 async def main(logger):
     for bar in range(1000):
-        await asyncio.sleep(1e-3)  # main's real task
+        await asyncio.sleep(1e-3)
         await logger.put({"foo": bar, "something": "else"})
 
 async def main_with_logging():
     logger = AsyncLogger("output.mpack")
     await asyncio.gather(
         main(logger),
-        logger.write(),  # runs when main is idle
+        logger.write(),  # write to file when main is idle
     )
 
 if __name__ == "__main__":

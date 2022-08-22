@@ -57,7 +57,7 @@ Logger::~Logger() {
   file_.close();
 }
 
-bool Logger::write(char *data, size_t size) {
+bool Logger::put(char *data, size_t size) {
   last_write_size_ = size;
   char *ndata = new char[size];
   std::memcpy(ndata, data, size);

@@ -75,34 +75,34 @@ class Logger {
   //! Stop the logging thread.
   ~Logger();
 
-  /*! Write data to the log.
+  /*! Save data to be written to the log.
    *
    * This function only copies the data to the circular buffer. It is then
    * written later to file by the logging thread.
    *
-   * \param data Raw data to write.
+   * \param data Raw data to log.
    * \param size Size of data array.
    *
    * \return Whether the item was successfully stored in the circular buffer
    *     (false means the buffer is full).
    */
-  bool write(char *data, size_t size);
+  bool put(char *data, size_t size);
 
-  /*! Write a dictionary to the log.
+  /*! Save a dictionary to be written to the log.
    *
-   * \param dict Dictionary to write.
+   * \param dict Dictionary to log.
    *
    * \return True if the dictionary was successfully stored for logging.
    *
-   * \sa write(char*, size_t)
+   * \sa put(char*, size_t)
    */
-  inline bool write(const Dictionary &dict) {
+  inline bool put(const Dictionary &dict) {
     size_t size = dict.serialize(serialization_buffer_);
-    return Logger::write(serialization_buffer_.data(), size);
+    return Logger::put(serialization_buffer_.data(), size);
   }
 
-  //! Size of last written message, in number of bytes.
-  size_t last_write_size() const { return last_write_size_; }
+  //! Size of the last message in bytes.
+  size_t last_size() const { return last_size_; }
 
  private:
   //! Flush internal buffer to output file.
@@ -124,16 +124,16 @@ class Logger {
   //! Last item popped from the circular buffer.
   std::pair<char *, size_t> pop_;
 
-  /*! Buffer used by \ref write(const Dictionary&).
+  /*! Buffer used by \ref put(const Dictionary&).
    *
    * This buffer is here for convenience. A consumer managing its own buffer
-   * can call \ref write(char*, size_t) directly, then this buffer won't be
+   * can call \ref put(char*, size_t) directly, then this buffer won't be
    * used.
    */
   std::vector<char> serialization_buffer_;
 
-  //! Size of last written message, in number of bytes.
-  size_t last_write_size_ = 0;
+  //! Size of the last message in bytes.
+  size_t last_size_ = 0;
 };
 
 }  // namespace mpacklog
