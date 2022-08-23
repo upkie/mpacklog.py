@@ -30,10 +30,17 @@ class FooSerializer:
         return {"foo": "bar"}
 
 
+class MockPinocchioSE3:
+    def __init__(self, array: np.ndarray):
+        self.np = array
+
+
 class TestSerialize(unittest.TestCase):
     def test_serialize(self):
         foo = FooSerializer()
-        self.assertEquals(serialize(np.array([1, 2, 3])), [1, 2, 3])
+        x = np.array([1, 2, 3])
+        self.assertEquals(serialize(x), list(x))
+        self.assertEquals(serialize(MockPinocchioSE3(x)), list(x))
         self.assertEquals(serialize(foo), {"foo": "bar"})
 
 
