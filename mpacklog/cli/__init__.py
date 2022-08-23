@@ -33,7 +33,10 @@ from .printers import (
 )
 
 
-def parse_command_line_arguments():
+def parse_command_line_arguments() -> argparse.Namespace:
+    """
+    Read command-line arguments.
+    """
     main_parser = argparse.ArgumentParser(
         description="Manipulate MessagePack log files."
     )
@@ -106,6 +109,9 @@ def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
 
 
 def main(argv=None):
+    """
+    Main function for the `mpacklog` command line.
+    """
     args = parse_command_line_arguments()
     if args.subcmd == "list":
         printer = FieldPrinter()
