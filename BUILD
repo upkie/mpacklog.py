@@ -29,7 +29,7 @@ py_library(
         "__init__.py",
     ],
     deps = [
-        "//mpacklog:python",
+        "//mpacklog/python",
     ],
 )
 
