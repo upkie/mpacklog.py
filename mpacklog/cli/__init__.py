@@ -33,9 +33,12 @@ from .printers import (
 )
 
 
-def parse_command_line_arguments() -> argparse.Namespace:
+def get_argument_parser() -> argparse.ArgumentParser:
     """
-    Read command-line arguments.
+    Parser for command-line arguments.
+
+    Returns:
+        Command-line argument parser.
     """
     main_parser = argparse.ArgumentParser(
         description="Manipulate MessagePack log files."
@@ -77,7 +80,7 @@ def parse_command_line_arguments() -> argparse.Namespace:
         "logfile", metavar="logfile", help="log file to open"
     )
 
-    return main_parser.parse_args()
+    return main_parser
 
 
 def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
@@ -108,15 +111,16 @@ def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
     printer.finish(logfile)
 
 
-def main(argv=None):
+def main(argv=None) -> None:
     """
     Main function for the `mpacklog` command line.
     """
-    args = parse_command_line_arguments()
+    parser = get_argument_parser()
+    args = parser.parse_args(argv)
     if args.subcmd == "list":
         printer = FieldPrinter()
         dump_log(args.logfile, printer)
-    else:  # args.subcmd == "dump":
+    elif args.subcmd == "dump":
         if args.csv:
             printer = CSVPrinter(args.fields)
         elif args.script:
@@ -124,3 +128,5 @@ def main(argv=None):
         else:  # print as JSON to standard output
             printer = JSONPrinter(args.fields)
         dump_log(args.logfile, printer, follow=args.follow)
+    else:  # no subcommand
+        parser.print_help()
