@@ -10,9 +10,15 @@ Log dictionaries to file using the MessagePack serialization format.
 
 ## Installation
 
+### Command-line and Python
+
+```console
+pip install mpacklog
+```
+
 ### Bazel
 
-Call a [git\_repository](https://bazel.build/rules/lib/repo/git#git_repository) rule in your Bazel ``WORKSPACE``:
+Add a `git_repository` rule to your Bazel ``WORKSPACE``:
 
 ```python
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
