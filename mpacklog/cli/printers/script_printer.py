@@ -58,7 +58,7 @@ class ScriptPrinter(Printer):
         self.script = script
         self.series = {field: [] for field in fields}
 
-    def process(self, unpacked):
+    def process(self, unpacked: dict):
         """
         Process a new unpacked dictionary.
 

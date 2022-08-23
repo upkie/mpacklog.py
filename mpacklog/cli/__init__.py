@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""!
+"""
 Manipulate MessagePack log files from the command line.
 """
 
@@ -60,27 +60,31 @@ def parse_command_line_arguments():
         help="keep file open and follow, as in `tail -f`",
     )
     dump_parser.add_argument(
-        "-l",
-        "--list-fields",
-        dest="list_fields",
-        action="store_true",
-        help="list available fields (nested keys) from each entry",
-    )
-    dump_parser.add_argument(
         "--script",
         metavar="script",
         help="dump listed fields to a //sandbox/... Python target",
     )
+
+    # mpacklog list -----------------------------------------------------------
+    list_parser = subparsers.add_parser(
+        "list",
+        help="List fields in a log",
+    )
+    list_parser.add_argument(
+        "logfile", metavar="logfile", help="log file to open"
+    )
+
     return main_parser.parse_args()
 
 
-def dump_log(logfile: str, follow: bool, printer: Printer):
-    """!
+def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
+    """
     Dump log file.
 
-    @param logfile Path to input log file.
-    @param follow Keep file open and wait for updates?
-    @param printer Printer class to process unpacked messages.
+    Args:
+        logfile: Path to input log file.
+        printer: Printer class to process unpacked messages.
+        follow (optional): Keep file open and wait for updates?
     """
     filehandle = open(logfile, "rb")
     unpacker = msgpack.Unpacker(raw=False)
@@ -103,12 +107,14 @@ def dump_log(logfile: str, follow: bool, printer: Printer):
 
 def main(argv=None):
     args = parse_command_line_arguments()
-    if args.list_fields:  # if -l is present, it overrides any other printer
+    if args.subcmd == "list":
         printer = FieldPrinter()
-    elif args.csv:
-        printer = CSVPrinter(args.fields)
-    elif args.script:
-        printer = ScriptPrinter(args.script, args.fields)
-    else:  # print as JSON to standard output
-        printer = JSONPrinter(args.fields)
-    dump_log(args.logfile, args.follow, printer)
+        dump_log(args.logfile, printer)
+    else:  # args.subcmd == "dump":
+        if args.csv:
+            printer = CSVPrinter(args.fields)
+        elif args.script:
+            printer = ScriptPrinter(args.script, args.fields)
+        else:  # print as JSON to standard output
+            printer = JSONPrinter(args.fields)
+        dump_log(args.logfile, printer, follow=args.follow)

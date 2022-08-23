@@ -37,7 +37,7 @@ class JSONPrinter(Printer):
         """
         self.fields = fields
 
-    def process(self, unpacked):
+    def process(self, unpacked: dict) -> None:
         """
         Process a new unpacked dictionary.
 

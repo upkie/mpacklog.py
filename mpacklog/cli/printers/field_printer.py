@@ -15,12 +15,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .fields import list_fields
 from .printer import Printer
 
 
 class FieldPrinter(Printer):
 
-    """!
+    """
     Parse whole log, then finally list all fields encountered.
     """
 
@@ -28,11 +29,12 @@ class FieldPrinter(Printer):
         self.fields = set([])
         self.observation = {}
 
-    def process(self, unpacked):
+    def process(self, unpacked: dict):
         """
         Process a new unpacked dictionary.
 
-        @param unpacked Unpacked dictionary.
+        Args:
+            unpacked: Unpacked dictionary.
         """
         unpacked_fields = set(list_fields(unpacked))
         new_fields = unpacked_fields - self.fields
@@ -43,9 +45,10 @@ class FieldPrinter(Printer):
         self.fields = set.union(self.fields, new_fields)
         self.observation.update(unpacked)
 
-    def finish(self, logfile):
+    def finish(self, logfile: str):
         """
         Instructions executed once the whole log has been processed.
 
-        @param logfile Path to input log file.
+        Args:
+            logfile: Path to input log file.
         """
