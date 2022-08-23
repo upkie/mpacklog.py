@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """!
-Dump log file to the standard output.
+Manipulate MessagePack log files from the command line.
 """
 
 import argparse
@@ -34,33 +34,44 @@ import numpy as np
 
 
 def parse_command_line_arguments():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("logfile", metavar="logfile", help="log file to open")
-    parser.add_argument("fields", nargs="*", help="fields to plot")
-    parser.add_argument(
+    main_parser = argparse.ArgumentParser(
+        description="Manipulate MessagePack log files."
+    )
+    subparsers = main_parser.add_subparsers(title="subcommands", dest="subcmd")
+
+    # mpacklog dump -----------------------------------------------------------
+    dump_parser = subparsers.add_parser(
+        "dump",
+        help="Dump log file to the standard output.",
+    )
+    dump_parser.add_argument(
+        "logfile", metavar="logfile", help="log file to open"
+    )
+    dump_parser.add_argument("fields", nargs="*", help="fields to plot")
+    dump_parser.add_argument(
         "--csv",
         action="store_true",
         help="format output in CSV",
     )
-    parser.add_argument(
+    dump_parser.add_argument(
         "-f",
         "--follow",
         action="store_true",
         help="keep file open and follow, as in `tail -f`",
     )
-    parser.add_argument(
+    dump_parser.add_argument(
         "-l",
         "--list-fields",
         dest="list_fields",
         action="store_true",
         help="list available fields (nested keys) from each entry",
     )
-    parser.add_argument(
+    dump_parser.add_argument(
         "--script",
         metavar="script",
         help="dump listed fields to a //sandbox/... Python target",
     )
-    return parser.parse_args()
+    return main_parser.parse_args()
 
 
 @dataclass
