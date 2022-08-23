@@ -26,8 +26,8 @@ git_repository(
 
 You can then use the following dependencies:
 
-- ``@mpacklog//cpp`` for C++ targets
-- ``@mpacklog//python`` for Python targets
+- ``@mpacklog//:cpp`` for C++ targets
+- ``@mpacklog//:python`` for Python targets
 
 ## Usage
 

@@ -7,29 +7,11 @@ load("//tools/lint:lint.bzl", "add_lint_tests")
 package(default_visibility = ["//visibility:public"])
 
 py_library(
-    name = "serialize",
-    srcs = [
-        "serialize.py",
-    ],
-)
-
-py_library(
-    name = "async_logger",
-    srcs = [
-        "async_logger.py",
-    ],
-    deps = [
-        ":serialize",
-    ],
-)
-
-py_library(
-    name = "mpacklog",
+    name = "python",
     srcs = [
         "__init__.py",
-    ],
-    deps = [
-        ":async_logger",
+        "async_logger.py",
+        "serialize.py",
     ],
 )
 
