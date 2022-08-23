@@ -54,15 +54,20 @@ def get_argument_parser() -> argparse.ArgumentParser:
     dump_parser.add_argument("fields", nargs="*", help="fields to plot")
     dump_parser.add_argument(
         "--format",
-        choices=["csv", "json", "script"],
+        choices=["csv", "json", "python"],
         default="json",
-        help="output format",
+        help="output format (CSV, JSON Lines or Python script)",
     )
     dump_parser.add_argument(
         "-f",
         "--follow",
         action="store_true",
         help="keep file open and follow, as in `tail -f`",
+    )
+    dump_parser.add_argument(
+        "--output-dir",
+        metavar="output_dir",
+        help="Output directory to write data and Python script to.",
     )
 
     # mpacklog list -----------------------------------------------------------
@@ -108,6 +113,9 @@ def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
 def main(argv=None) -> None:
     """
     Main function for the `mpacklog` command line.
+
+    Args:
+        argv: Command-line arguments.
     """
     parser = get_argument_parser()
     args = parser.parse_args(argv)
@@ -119,8 +127,8 @@ def main(argv=None) -> None:
             printer = CSVPrinter(args.fields)
         elif args.format == "json":
             printer = JSONPrinter(args.fields)
-        elif args.format == "script":
-            printer = ScriptPrinter(args.script, args.fields)
+        elif args.format == "python":
+            printer = ScriptPrinter(args.output_dir, args.fields)
         dump_log(args.logfile, printer, follow=args.follow)
     else:  # no subcommand
         parser.print_help()

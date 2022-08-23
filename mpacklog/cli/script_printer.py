@@ -19,7 +19,7 @@ import logging
 import os
 import pickle
 from os import path
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 
@@ -33,20 +33,20 @@ class ScriptPrinter(Printer):
     Dump listed fields to a //sandbox/... Python target.
     """
 
-    def __init__(self, script_path: str, fields: List):
+    def __init__(self, output_dir: Optional[str], fields: List):
         """
         Configure printer options.
 
         Args:
-            script_path: Path to output script.
+            output_dir: Directory to write data and Python script to.
             fields: If given, only print out these selected fields (nested keys
                 in "key1/.../keyN" format).
         """
-        script = path.basename(script_path)
-        output_dir = path.dirname(script_path)
-        if path.exists(output_dir):
-            raise FileExistsError(f"Directory {output_dir} already exists")
-        os.makedirs(output_dir)
+        if output_dir is None:
+            logging.warn("No --output-dir specified, defaulting to /tmp")
+            output_dir = "/tmp"
+        if not path.exists(output_dir):
+            os.makedirs(output_dir)
         if "time" not in fields:
             fields.append("time")
         fields = [
@@ -55,7 +55,6 @@ class ScriptPrinter(Printer):
         self.at_least_one_value = {field: False for field in fields}
         self.fields = fields
         self.output_dir = output_dir
-        self.script = script
         self.series = {field: [] for field in fields}
 
     def process(self, unpacked: dict):
@@ -86,8 +85,8 @@ class ScriptPrinter(Printer):
             if not self.at_least_one_value[field]:
                 logging.warning(f'No data for field "{field}"')
         output_dir = self.output_dir
-        data_file = path.join(output_dir, f"{self.script}.pkl")
-        main_file = path.join(output_dir, f"{self.script}.py")
+        data_file = path.join(output_dir, "data.pkl")
+        main_file = path.join(output_dir, "main.py")
         start_ipython_file = path.join(output_dir, "start_ipython.py")
         build_file = path.join(output_dir, "BUILD")
         with open(data_file, "wb") as pickle_file:
@@ -107,7 +106,7 @@ if __name__ == "__main__":
             )
         with open(build_file, "w") as output:
             output.write(
-                f"""# -*- python -*-
+                """# -*- python -*-
 #
 # Copyright 2022 Stéphane Caron
 
@@ -116,7 +115,7 @@ load("//tools/lint:lint.bzl", "add_lint_tests")
 package(default_visibility = ["//visibility:public"])
 
 py_binary(
-    name = "{self.script}",
+    name = "main",
     srcs = [
         "{path.basename(main_file)}",
         "start_ipython.py",
@@ -142,7 +141,7 @@ import pickle
 import pylab
 
 if __name__ == "__main__":
-    series = pickle.load(open("{self.script}.pkl", "rb"))
+    series = pickle.load(open("data.pkl", "rb"))
     time = series["time"]
     dt = round((time[-1] - time[0]) / (len(time) - 1), 3)
 """
