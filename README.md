@@ -31,7 +31,7 @@ git_repository(
 )
 ```
 
-You can then use the ``@mpacklog`` dependency for C++ targets. Also, the
+You can then use the ``@mpacklog`` dependency for C++ targets, or the
 ``@mpacklog//:python`` dependency for Python targets.
 
 ## Usage
@@ -63,7 +63,7 @@ The Python implementation uses asynchronous I/O. Add messages to the log using t
 
 ```python
 import asyncio
-from mpacklog.python import AsyncLogger
+from mpacklog import AsyncLogger
 
 async def main(logger):
     for bar in range(1000):
