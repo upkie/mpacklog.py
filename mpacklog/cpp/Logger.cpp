@@ -21,7 +21,7 @@
  *     License: BSD-2-Clause (see licenses/LICENSE-mc_rtc)
  */
 
-#include "cpp/Logger.h"
+#include "mpacklog/cpp/Logger.h"
 
 #include <string>
 
@@ -58,7 +58,7 @@ Logger::~Logger() {
 }
 
 bool Logger::put(char *data, size_t size) {
-  last_write_size_ = size;
+  last_size_ = size;
   char *ndata = new char[size];
   std::memcpy(ndata, data, size);
   return circular_buffer_.push({ndata, size});
