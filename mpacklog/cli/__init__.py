@@ -26,8 +26,8 @@ import msgpack
 
 from .csv_printer import CSVPrinter
 from .field_printer import FieldPrinter
-from .printer import Printer
 from .json_printer import JSONPrinter
+from .printer import Printer
 from .script_printer import ScriptPrinter
 
 
@@ -53,20 +53,16 @@ def get_argument_parser() -> argparse.ArgumentParser:
     )
     dump_parser.add_argument("fields", nargs="*", help="fields to plot")
     dump_parser.add_argument(
-        "--csv",
-        action="store_true",
-        help="format output in CSV",
+        "--format",
+        choices=["csv", "json", "script"],
+        default="json",
+        help="output format",
     )
     dump_parser.add_argument(
         "-f",
         "--follow",
         action="store_true",
         help="keep file open and follow, as in `tail -f`",
-    )
-    dump_parser.add_argument(
-        "--script",
-        metavar="script",
-        help="dump listed fields to a //sandbox/... Python target",
     )
 
     # mpacklog list -----------------------------------------------------------
@@ -119,12 +115,12 @@ def main(argv=None) -> None:
         printer = FieldPrinter()
         dump_log(args.logfile, printer)
     elif args.subcmd == "dump":
-        if args.csv:
+        if args.format == "csv":
             printer = CSVPrinter(args.fields)
-        elif args.script:
-            printer = ScriptPrinter(args.script, args.fields)
-        else:  # print as JSON to standard output
+        elif args.format == "json":
             printer = JSONPrinter(args.fields)
+        elif args.format == "script":
+            printer = ScriptPrinter(args.script, args.fields)
         dump_log(args.logfile, printer, follow=args.follow)
     else:  # no subcommand
         parser.print_help()

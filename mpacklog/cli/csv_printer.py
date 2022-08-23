@@ -28,7 +28,8 @@ class CSVPrinter(Printer):
     """
 
     def __init__(self, fields: List[str]):
-        assert len(fields) > 0
+        if len(fields) < 1:
+            raise ValueError("A list of fields is required for the CSV format")
         if fields[0] != "time":
             fields.insert(0, "time")
         print(",".join(fields))
