@@ -26,7 +26,7 @@ cc_library(
 py_library(
     name = "python",
     deps = [
-        "//mpacklog/python",
+        "//mpacklog:python",
     ],
 )
 
