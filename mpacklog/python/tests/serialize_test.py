@@ -25,9 +25,16 @@ import numpy as np
 from mpacklog.python.serialize import serialize
 
 
+class FooSerializer:
+    def serialize(self):
+        return {"foo": "bar"}
+
+
 class TestSerialize(unittest.TestCase):
     def test_serialize(self):
+        foo = FooSerializer()
         self.assertEquals(serialize(np.array([1, 2, 3])), [1, 2, 3])
+        self.assertEquals(serialize(foo), {"foo": "bar"})
 
 
 if __name__ == "__main__":
