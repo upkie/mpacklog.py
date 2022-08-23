@@ -24,13 +24,11 @@ import time
 
 import msgpack
 
-from .printers import (
-    CSVPrinter,
-    FieldPrinter,
-    JSONPrinter,
-    Printer,
-    ScriptPrinter,
-)
+from .csv_printer import CSVPrinter
+from .field_printer import FieldPrinter
+from .printer import Printer
+from .json_printer import JSONPrinter
+from .script_printer import ScriptPrinter
 
 
 def get_argument_parser() -> argparse.ArgumentParser:
