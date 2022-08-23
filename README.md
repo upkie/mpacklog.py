@@ -5,6 +5,7 @@
 [![Documentation](https://img.shields.io/badge/docs-online-brightgreen?logo=read-the-docs&style=flat)](https://scaron.info/doc/mpacklog/)
 ![C++ version](https://img.shields.io/badge/C++-17/20-blue.svg?style=flat)
 [![Release](https://img.shields.io/github/v/release/stephane-caron/mpacklog.svg?sort=semver)](https://github.com/stephane-caron/mpacklog/releases)
+![Status](https://img.shields.io/pypi/status/mpacklog)
 
 Log dictionaries to file using the MessagePack serialization format.
 
