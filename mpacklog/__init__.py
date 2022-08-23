@@ -15,11 +15,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""!
-Python library for an agent to interact with a spine.
+"""
+Log dictionaries to file using the MessagePack serialization format.
 """
 
-from .async_logger import AsyncLogger
+__version__ = "2.0.0rc1"
+
+from .python import AsyncLogger
 
 __all__ = [
     "AsyncLogger",
