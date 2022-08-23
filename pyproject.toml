@@ -26,6 +26,8 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
+    "aiofiles >=0.7.0",
+    "msgpack >=1.0.2",
 ]
 
 [project.optional-dependencies]
