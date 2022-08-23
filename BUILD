@@ -16,6 +16,13 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "mpacklog",
+    deps = [
+        "//mpacklog/cpp",
+    ],
+)
+
 py_library(
     name = "python",
     deps = [

@@ -11,7 +11,7 @@ Log dictionaries to file using the MessagePack serialization format.
 
 ## Installation
 
-### Command-line and Python
+### Python
 
 ```console
 pip install mpacklog
@@ -19,7 +19,7 @@ pip install mpacklog
 
 ### Bazel
 
-Add a `git_repository` rule to your Bazel ``WORKSPACE``:
+Add a git repository rule to your Bazel ``WORKSPACE``:
 
 ```python
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
@@ -31,10 +31,8 @@ git_repository(
 )
 ```
 
-You can then use the following dependencies:
-
-- ``@mpacklog//:cpp`` for C++ targets
-- ``@mpacklog//:python`` for Python targets
+You can then use the ``@mpacklog`` dependency for C++ targets. Also, the
+``@mpacklog//:python`` dependency for Python targets.
 
 ## Usage
 
