@@ -40,3 +40,7 @@ doc/html
 *.exe
 *.out
 *.app
+
+# Python
+__pycache__
+dist

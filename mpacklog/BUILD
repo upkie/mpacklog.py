@@ -6,11 +6,4 @@ load("//tools/lint:lint.bzl", "add_lint_tests")
 
 package(default_visibility = ["//visibility:public"])
 
-py_library(
-    name = "python",
-    deps = [
-        ":mpacklog",
-    ],
-)
-
 add_lint_tests(enable_clang_format_lint = True)
