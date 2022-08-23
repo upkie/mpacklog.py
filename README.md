@@ -59,7 +59,7 @@ int main() {
 
 ### Python
 
-The Python implementation uses asynchronous I/O. Add messages to the log using the [`put`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1async__logger_1_1AsyncLogger.html#a0ce63a4b1ef7664126a4816e94ebf21b) function, write them to file in the separate `write` coroutine.
+The Python implementation uses asynchronous I/O. Add messages to the log using the [`put`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1async__logger_1_1AsyncLogger.html#a0ce63a4b1ef7664126a4816e94ebf21b) function, write them to file in the separate [`write`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1async__logger_1_1AsyncLogger.html#a3f7d7b7f2579f036af203f856fbe9b7b) coroutine.
 
 ```python
 import asyncio
