@@ -25,6 +25,9 @@ cc_library(
 
 py_library(
     name = "python",
+    srcs = [
+        "__init__.py",
+    ],
     deps = [
         "//mpacklog:python",
     ],
