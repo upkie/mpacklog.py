@@ -46,12 +46,12 @@ The C++ implementation uses multi-threading. Add messages to the log using the `
 #include <mpacklog/Logger.h>
 #include <palimpsest/Dictionary.h>
 
-int main()
-{
-    mpacklog::Logger logger("output.mpack");
+using palimpsest::Dictionary;
 
+int main() {
+    mpacklog::Logger logger("output.mpack");
     for (unsigned bar = 0; bar < 1000u; ++bar) {
-        palimpsest::Dictionary dict;
+        Dictionary dict;
         dict("foo") = bar;
         dict("something") = "else";
         logger.put(dict):
