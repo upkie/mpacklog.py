@@ -48,6 +48,7 @@ using palimpsest::Dictionary;
 
 int main() {
     mpacklog::Logger logger("output.mpack");
+
     for (unsigned bar = 0; bar < 1000u; ++bar) {
         Dictionary dict;
         dict("foo") = bar;
@@ -59,11 +60,11 @@ int main() {
 
 ### Python
 
-The Python implementation uses asynchronous I/O. Add messages to the log using the [`put`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1async__logger_1_1AsyncLogger.html#a0ce63a4b1ef7664126a4816e94ebf21b) function, write them to file in the separate [`write`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1async__logger_1_1AsyncLogger.html#a3f7d7b7f2579f036af203f856fbe9b7b) coroutine.
+The Python implementation uses asynchronous I/O. Add messages to the log using the [`put`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1async__logger_1_1AsyncLogger.html#a0ce63a4b1ef7664126a4816e94ebf21b) function, have them written to file in the separate [`write`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1async__logger_1_1AsyncLogger.html#a3f7d7b7f2579f036af203f856fbe9b7b) coroutine.
 
 ```python
 import asyncio
-from mpacklog import AsyncLogger
+from mpacklog import Logger
 
 async def main(logger):
     for bar in range(1000):
@@ -71,7 +72,7 @@ async def main(logger):
         await logger.put({"foo": bar, "something": "else"})
 
 async def main_with_logging():
-    logger = AsyncLogger("output.mpack")
+    logger = Logger("output.mpack")
     await asyncio.gather(
         main(logger),
         logger.write(),  # write to file when main is idle
