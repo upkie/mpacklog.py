@@ -50,8 +50,8 @@ class Logger:
                 break
             await file.write(packer.pack(message))
             # Flushing has little effect when the Python process is configured
-            # on its own core (CPUID). When running on the default core, it
-            # tends to make the slack duration of the other (control) coroutine
             # more predictable although a little bit lower on average.
+            # on its own core (CPUID). When running on the default core, it
+            # tends to make the slack duration of the other coroutines
             await file.flush()
         await file.close()

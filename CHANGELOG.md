@@ -10,6 +10,7 @@
 - List log fields from the command line
 - Python `Logger` implementation
 - `mpacklog` command-line tool
+- Unit tests for Python API
 
 ## [1.0.0] - 2022/08/17
 
