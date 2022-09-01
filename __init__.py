@@ -19,8 +19,8 @@
 Log dictionaries to file using the MessagePack serialization format.
 """
 
-from .mpacklog.python import AsyncLogger
+from .mpacklog.python import Logger
 
 __all__ = [
-    "AsyncLogger",
+    "Logger",
 ]

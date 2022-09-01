@@ -21,8 +21,8 @@ Log dictionaries to file using the MessagePack serialization format.
 
 __version__ = "2.0.0rc2"
 
-from .python import AsyncLogger
+from .python import Logger
 
 __all__ = [
-    "AsyncLogger",
+    "Logger",
 ]

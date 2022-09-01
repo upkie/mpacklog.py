@@ -10,7 +10,7 @@ py_library(
     name = "python",
     srcs = [
         "__init__.py",
-        "async_logger.py",
+        "logger.py",
         "serialize.py",
     ],
 )
