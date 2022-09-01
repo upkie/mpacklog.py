@@ -19,7 +19,7 @@
 Log dictionaries to file using the MessagePack serialization format.
 """
 
-__version__ = "2.0.0rc2"
+__version__ = "2.0.0"
 
 from .python import Logger
 
