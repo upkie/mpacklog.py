@@ -64,21 +64,22 @@ The Python implementation uses asynchronous I/O. Add messages to the log using t
 import asyncio
 import mpacklog
 
-async def main(logger):
-    for bar in range(1000):
-        await asyncio.sleep(1e-3)
-        await logger.put({"foo": bar, "something": "else"})
-
-async def main_with_logging():
+async def main():
     logger = mpacklog.Logger("output.mpack")
 
     await asyncio.gather(
-        main(logger),
-        logger.write(),  # write to file when main is idle
+        main_loop(logger),
+        logger.write(),
     )
 
+async def main_loop(logger):
+    for bar in range(1000):
+        await asyncio.sleep(1e-3)
+        await logger.put({"foo": bar, "something": "else"})
+    await logger.stop()
+
 if __name__ == "__main__":
-    asyncio.run(main_with_logging())
+    asyncio.run(main())
 ```
 
 ## Command-line
