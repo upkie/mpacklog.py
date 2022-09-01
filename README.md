@@ -64,7 +64,7 @@ The Python implementation uses asynchronous I/O. Add messages to the log using t
 
 ```python
 import asyncio
-from mpacklog import Logger
+import mpacklog
 
 async def main(logger):
     for bar in range(1000):
@@ -72,7 +72,8 @@ async def main(logger):
         await logger.put({"foo": bar, "something": "else"})
 
 async def main_with_logging():
-    logger = Logger("output.mpack")
+    logger = mpacklog.Logger("output.mpack")
+
     await asyncio.gather(
         main(logger),
         logger.write(),  # write to file when main is idle
