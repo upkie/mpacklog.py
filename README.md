@@ -7,7 +7,7 @@
 [![Release](https://img.shields.io/github/v/release/stephane-caron/mpacklog.svg?sort=semver)](https://github.com/stephane-caron/mpacklog/releases)
 <!-- ![Status](https://img.shields.io/pypi/status/mpacklog) -->
 
-Log dictionaries to file using the MessagePack serialization format.
+Log dictionaries to MessagePack files in C++ and Python.
 
 ## Installation
 
