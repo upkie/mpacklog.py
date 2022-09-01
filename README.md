@@ -81,3 +81,22 @@ async def main_with_logging():
 if __name__ == "__main__":
     asyncio.run(main_with_logging())
 ```
+
+## Command-line
+
+If you ``pip``-installed mpacklog, you can use the ``mpacklog`` command to dump logs to JSON:
+
+```console
+mpacklog dump my_log.mpack
+```
+
+Alternatively and more generally, two great tools to manipulate logs from the command line are:
+
+* [`rq`](https://github.com/dflemstr/rq): transform from/to MessagePack, JSON, YAML, TOML, ...
+* [`jq`](https://github.com/stedolan/jq): manipulate JSON series to add, remove or extend fields
+
+For instance, ``mpacklog dump`` is equivalent to:
+
+```console
+rq -mJ < my_log.mpack
+```
