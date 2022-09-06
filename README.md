@@ -66,11 +66,7 @@ import mpacklog
 
 async def main():
     logger = mpacklog.Logger("output.mpack")
-
-    await asyncio.gather(
-        main_loop(logger),
-        logger.write(),
-    )
+    await asyncio.gather(main_loop(logger), logger.write())
 
 async def main_loop(logger):
     for bar in range(1000):
