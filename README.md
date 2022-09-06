@@ -27,7 +27,7 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 git_repository(
     name = "mpacklog",
     remote = "https://github.com/stephane-caron/mpacklog.git",
-    tag = "v1.0.0",
+    tag = "v2.0.0",
 )
 ```
 
