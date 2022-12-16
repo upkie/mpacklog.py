@@ -1,6 +1,6 @@
 # mpacklog
 
-[![Build](https://img.shields.io/github/workflow/status/stephane-caron/mpacklog/Bazel)](https://github.com/stephane-caron/mpacklog/actions)
+[![Build](https://img.shields.io/github/actions/workflow/status/stephane-caron/mpacklog/bazel.yml?branch=main)](https://github.com/stephane-caron/mpacklog/actions)
 [![Coverage](https://coveralls.io/repos/github/stephane-caron/mpacklog/badge.svg?branch=main)](https://coveralls.io/github/stephane-caron/mpacklog?branch=main)
 [![Documentation](https://img.shields.io/badge/docs-online-brightgreen?logo=read-the-docs&style=flat)](https://scaron.info/doc/mpacklog/)
 ![C++ version](https://img.shields.io/badge/C++-17/20-blue.svg?style=flat)
