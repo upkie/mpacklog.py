@@ -10,13 +10,7 @@ Log dictionaries to MessagePack files in C++ and Python.
 
 ## Installation
 
-### Python
-
-```console
-pip install mpacklog
-```
-
-### Bazel
+### C++ with Bazel
 
 Add a git repository rule to your Bazel ``WORKSPACE``:
 
@@ -32,6 +26,12 @@ git_repository(
 
 You can then use the ``@mpacklog`` dependency for C++ targets, or the
 ``@mpacklog//:python`` dependency for Python targets.
+
+### Python
+
+```console
+pip install mpacklog
+```
 
 ## Usage
 
