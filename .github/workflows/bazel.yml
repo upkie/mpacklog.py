@@ -57,7 +57,7 @@ jobs:
             - name: "Report test coverage"
               if: runner.os == 'Linux'
               run: |
-                  tools/bazelisk coverage --combined_report=lcov --instrument_test_targets --test_verbose_timeout_warnings //...
+                  tools/bazelisk coverage --combined_report=lcov --instrument_test_targets //...
 
             - name: "Submit report to Coveralls"
               if: runner.os == 'Linux'
