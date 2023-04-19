@@ -55,13 +55,12 @@ jobs:
                   tools/bazelisk test //...
 
             - name: "Report test coverage"
+              if: runner.os == 'Linux'
               run: |
                   tools/bazelisk coverage --combined_report=lcov --instrument_test_targets --test_verbose_timeout_warnings //...
 
-            - name: Setup upterm session
-              uses: lhotari/action-upterm@v1
-
             - name: "Submit report to Coveralls"
+              if: runner.os == 'Linux'
               uses: coverallsapp/github-action@1.1.3
               with:
                   github-token: ${{ secrets.github_token }}
