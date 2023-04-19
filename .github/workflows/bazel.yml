@@ -18,11 +18,23 @@ jobs:
             - name: "Checkout sources"
               uses: actions/checkout@v2
 
-            - name: "Install Eigen and NumPy"
-              run: sudo apt-get install -y libeigen3-dev python3-numpy
+            - name: "Install Eigen"
+              if: runner.os == 'Linux'
+              run: sudo apt-get install -y libeigen3-dev
+
+            - name: "Install Eigen"
+              if: runner.os == 'macOS'
+              run: |
+                 brew update
+                 brew install eigen
+
+            - name: "Install Python"
+              uses: actions/setup-python@v4
+              with: 
+                python-version: '3.10'    
 
             - name: "Install PyPI dependencies"
-              run: pip install aiofiles msgpack
+              run: pip3 install aiofiles msgpack numpy
 
             - name: "Build the library"
               env:
