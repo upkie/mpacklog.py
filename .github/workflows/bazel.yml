@@ -18,11 +18,11 @@ jobs:
             - name: "Checkout sources"
               uses: actions/checkout@v2
 
-            - name: "Install Eigen"
+            - name: "Install Eigen (Linux)"
               if: runner.os == 'Linux'
               run: sudo apt-get install -y libeigen3-dev
 
-            - name: "Install Eigen"
+            - name: "Install Eigen (macOS)"
               if: runner.os == 'macOS'
               run: |
                  brew update
@@ -34,7 +34,7 @@ jobs:
                 python-version: '3.10'    
 
             - name: "Install PyPI dependencies"
-              run: pip3 install aiofiles msgpack numpy
+              run: pip3 install aiofiles msgpack numpy six clang-format
 
             - name: "Build the library"
               env:
