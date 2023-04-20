@@ -37,7 +37,11 @@ Logger::Logger(const std::string &path, bool append) {
     throw std::runtime_error("Cannot open " + path + " for writing");
   }
   thread_ = std::thread([this]() {
+#ifdef __APPLE__
+    pthread_setname_np("logger_thread");
+#else
     pthread_setname_np(pthread_self(), "logger_thread");
+#endif
     while (keep_going_) {
       flush_buffer();
 

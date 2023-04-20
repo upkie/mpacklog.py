@@ -13,16 +13,28 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                os: [ubuntu-latest]
+                os: [ubuntu-latest, macos-latest]
         steps:
             - name: "Checkout sources"
               uses: actions/checkout@v2
 
-            - name: "Install Eigen and NumPy"
-              run: sudo apt-get install -y libeigen3-dev python3-numpy
+            - name: "Install Eigen (Linux)"
+              if: runner.os == 'Linux'
+              run: sudo apt-get install -y libeigen3-dev
+
+            - name: "Install Eigen (macOS)"
+              if: runner.os == 'macOS'
+              run: |
+                 brew update
+                 brew install eigen
+
+            - name: "Install Python"
+              uses: actions/setup-python@v4
+              with: 
+                python-version: '3.10'    
 
             - name: "Install PyPI dependencies"
-              run: pip install aiofiles msgpack
+              run: pip3 install aiofiles msgpack numpy six clang-format
 
             - name: "Build the library"
               env:
@@ -43,10 +55,12 @@ jobs:
                   tools/bazelisk test //...
 
             - name: "Report test coverage"
+              if: runner.os == 'Linux'
               run: |
                   tools/bazelisk coverage --combined_report=lcov --instrument_test_targets //...
 
             - name: "Submit report to Coveralls"
+              if: runner.os == 'Linux'
               uses: coverallsapp/github-action@1.1.3
               with:
                   github-token: ${{ secrets.github_token }}
