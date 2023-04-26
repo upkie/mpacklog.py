@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.0] - 2023/04/26
+
+### Changed
+
+- Make code compatible with macOS (thanks to @boragokbakan)
+
 ## [2.0.0] - 2022/09/01
 
 ### Added
