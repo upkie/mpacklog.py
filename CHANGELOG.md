@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Remove unused ``mypy_integration``
+
 ## [2.1.0] - 2023/04/26
 
 ### Changed
