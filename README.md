@@ -3,14 +3,15 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/stephane-caron/mpacklog/bazel.yml?branch=main)](https://github.com/stephane-caron/mpacklog/actions)
 [![Coverage](https://coveralls.io/repos/github/stephane-caron/mpacklog/badge.svg?branch=main)](https://coveralls.io/github/stephane-caron/mpacklog?branch=main)
 [![Documentation](https://img.shields.io/badge/docs-online-brightgreen?logo=read-the-docs&style=flat)](https://scaron.info/doc/mpacklog/)
-![C++ version](https://img.shields.io/badge/C++-17/20-blue.svg?style=flat)
-[![Release](https://img.shields.io/github/v/release/stephane-caron/mpacklog.svg?sort=semver)](https://github.com/stephane-caron/mpacklog/releases)
 
 Log dictionaries to MessagePack files in C++ and Python.
 
 ## Installation
 
 ### C++ with Bazel
+
+![C++ version](https://img.shields.io/badge/C++-17/20-blue.svg?style=flat)
+[![C++ release](https://img.shields.io/github/v/release/stephane-caron/mpacklog.svg?sort=semver)](https://github.com/stephane-caron/mpacklog/releases)
 
 Add a git repository rule to your Bazel ``WORKSPACE``:
 
@@ -29,8 +30,11 @@ You can then use the ``@mpacklog`` dependency for C++ targets, or the
 
 ### Python
 
+[![PyPI version](https://img.shields.io/pypi/v/mpacklog)](https://pypi.org/project/mpacklog/)
+[![PyPI downloads](https://pepy.tech/badge/mpacklog/month)](https://pepy.tech/project/mpacklog)
+
 ```console
-pip install mpacklog
+$ pip install mpacklog
 ```
 
 ## Usage
