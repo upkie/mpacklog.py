@@ -31,7 +31,7 @@ You can then use the ``@mpacklog`` dependency for C++ targets, or the
 ### Python
 
 [![PyPI version](https://img.shields.io/pypi/v/mpacklog)](https://pypi.org/project/mpacklog/)
-[![PyPI downloads](https://pepy.tech/badge/mpacklog/month)](https://pepy.tech/project/mpacklog)
+[![PyPI downloads](https://static.pepy.tech/badge/mpacklog)](https://pepy.tech/project/mpacklog)
 
 ```console
 $ pip install mpacklog
