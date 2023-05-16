@@ -30,11 +30,11 @@ jobs:
 
             - name: "Install Python"
               uses: actions/setup-python@v4
-              with: 
-                python-version: '3.10'    
+              with:
+                python-version: "3.10"
 
             - name: "Install PyPI dependencies"
-              run: pip3 install aiofiles msgpack numpy six clang-format
+              run: pip3 install clang-format numpy six
 
             - name: "Build the library"
               env:
