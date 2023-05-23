@@ -4,6 +4,7 @@
 
 ### Changed
 
+- CI: Update Bazelisk script
 - Remove unused ``mypy_integration``
 
 ## [2.1.0] - 2023/04/26
