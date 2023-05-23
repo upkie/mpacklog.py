@@ -1,12 +1,13 @@
 *.mpack
 *.out
 bazel-bin
-bazel-out
 bazel-mpacklog
+bazel-out
 bazel-testlogs
 build
 coverage
 doc/html
+tools/bazel
 
 # Prerequisites
 *.d
