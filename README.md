@@ -57,18 +57,18 @@ int main() {
 
 ### Python
 
-The Python implementation provides both a synchronous and an asynchronous API. Add messages to the log using the [`put`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1logger_1_1Logger.html#aa0f928ac07280acd132627d8545a7e18) function, have them written to file in the separate [`write`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1logger_1_1Logger.html#acbea9c05c465423efc3f38a25ed699d2) coroutine.
+The Python implementation provides both a synchronous and an asynchronous API. 
 
 #### Asynchronous API
+Add messages to the log using the [`put`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1logger_1_1Logger.html#aa0f928ac07280acd132627d8545a7e18) function, have them written to file in the separate [`write`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1logger_1_1Logger.html#acbea9c05c465423efc3f38a25ed699d2) coroutine.
+
 ```python
 import asyncio
 import mpacklog
 
-
 async def main():
     logger = mpacklog.AsyncLogger("output.mpack")
     await asyncio.gather(main_loop(logger), logger.write())
-
 
 async def main_loop(logger):
     for bar in range(1000):
@@ -80,9 +80,11 @@ async def main_loop(logger):
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
 #### Synchronous API
 The Synchronous API is very similar to the Asynchronous API, except it doesn't provide a ``stop`` method and the 
 ``put`` and ``write`` methods are blocking.
+
 ```python
 import mpacklog
 
