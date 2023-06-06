@@ -7,8 +7,16 @@ load("//tools/lint:lint.bzl", "add_lint_tests")
 package(default_visibility = ["//visibility:public"])
 
 py_test(
-    name = "logger_test",
-    srcs = ["logger_test.py"],
+    name = "async_logger_test",
+    srcs = ["async_logger_test.py"],
+    deps = [
+        "//mpacklog/python",
+    ],
+)
+
+py_test(
+    name = "sync_logger_test",
+    srcs = ["sync_logger_test.py"],
     deps = [
         "//mpacklog/python",
     ],

@@ -15,7 +15,8 @@ py_library(
     ],
     srcs = [
         "__init__.py",
-        "logger.py",
+        "async_logger.py",
+        "sync_logger.py",
         "serialize.py",
     ],
 )
