@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+## [3.0.0] - 2023/06/06
+
+### Added
+
+- Synchronous ``SyncLogger`` class
 
 ### Changed
 
 - CI: Update Bazelisk script
+- Rename ``Logger`` to ``AsyncLogger``
 - Remove unused ``mypy_integration``
 
 ## [2.1.0] - 2023/04/26
