@@ -24,7 +24,7 @@ import msgpack
 from .serialize import serialize
 
 
-class Logger:
+class AsyncLogger:
 
     """!
     Logger with Asynchronous I/O.

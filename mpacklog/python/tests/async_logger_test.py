@@ -24,13 +24,13 @@ import tempfile
 import unittest
 from unittest import IsolatedAsyncioTestCase
 
-from mpacklog.python.logger import Logger
+from mpacklog.python.async_logger import AsyncLogger
 
 
-class TestLogger(IsolatedAsyncioTestCase):
+class TestAsyncLogger(IsolatedAsyncioTestCase):
     async def test_put(self):
         tmp_file = tempfile.mktemp(suffix=".mpack")
-        logger = Logger(tmp_file)
+        logger = AsyncLogger(tmp_file)
         self.assertTrue(logger.queue.empty())
         await logger.put({"foo": 42, "something": "else"})
         self.assertFalse(logger.queue.empty())
@@ -39,7 +39,7 @@ class TestLogger(IsolatedAsyncioTestCase):
         tmp_file = tempfile.mktemp(suffix=".mpack")
         self.assertFalse(os.path.exists(tmp_file))
 
-        logger = Logger(tmp_file)
+        logger = AsyncLogger(tmp_file)
         await logger.stop()
         await logger.write()
         self.assertTrue(os.path.exists(tmp_file))

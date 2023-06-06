@@ -19,8 +19,10 @@
 Python library for an agent to interact with a spine.
 """
 
-from .logger import Logger
+from .async_logger import AsyncLogger
+from .sync_logger import SyncLogger
 
 __all__ = [
-    "Logger",
+    "AsyncLogger",
+    "SyncLogger"
 ]
