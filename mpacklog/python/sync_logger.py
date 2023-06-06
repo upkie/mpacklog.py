@@ -43,8 +43,10 @@ class SyncLogger:
         """
         Puts a message in the queue.
 
-        @param message: The message to put in the queue.
-        @param write: Whether to append the message to the file immediately to prevent data loss.
+        Args:
+            message (dict): message to log
+            write (bool): whether to append the message to the file immediately
+
         """
         self.queue.put(message)
 
