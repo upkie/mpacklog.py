@@ -19,7 +19,7 @@
 Log dictionaries to file using the MessagePack serialization format.
 """
 
-__version__ = "2.1.0"
+__version__ = "3.0.0"
 
 from .python.async_logger import AsyncLogger
 from .python.sync_logger import SyncLogger
