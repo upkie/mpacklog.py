@@ -25,6 +25,6 @@ from .python.async_logger import AsyncLogger
 from .python.sync_logger import SyncLogger
 
 __all__ = [
-    "SyncLogger",
     "AsyncLogger",
+    "SyncLogger",
 ]
