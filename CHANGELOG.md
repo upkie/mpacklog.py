@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Compile in optimized rather than fast-build mode by default
+
 ## [3.0.0] - 2023/06/06
 
 ### Added
