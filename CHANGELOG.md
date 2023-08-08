@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Bazel: Find clang-format on various operating systems
+
 ### Changed
 
 - Compile in optimized rather than fast-build mode by default
