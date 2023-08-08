@@ -1,7 +1,7 @@
 # mpacklog
 
-[![Build](https://img.shields.io/github/actions/workflow/status/stephane-caron/mpacklog/bazel.yml?branch=main)](https://github.com/stephane-caron/mpacklog/actions)
-[![Coverage](https://coveralls.io/repos/github/stephane-caron/mpacklog/badge.svg?branch=main)](https://coveralls.io/github/stephane-caron/mpacklog?branch=main)
+[![Build](https://img.shields.io/github/actions/workflow/status/tasts-robots/mpacklog/bazel.yml?branch=main)](https://github.com/tasts-robots/mpacklog/actions)
+[![Coverage](https://coveralls.io/repos/github/tasts-robots/mpacklog/badge.svg?branch=main)](https://coveralls.io/github/tasts-robots/mpacklog?branch=main)
 [![Documentation](https://img.shields.io/badge/docs-online-brightgreen?logo=read-the-docs&style=flat)](https://scaron.info/doc/mpacklog/)
 
 Log dictionaries to MessagePack files in C++ and Python.
@@ -11,17 +11,18 @@ Log dictionaries to MessagePack files in C++ and Python.
 ### C++ with Bazel
 
 ![C++ version](https://img.shields.io/badge/C++-17/20-blue.svg?style=flat)
-[![C++ release](https://img.shields.io/github/v/release/stephane-caron/mpacklog.svg?sort=semver)](https://github.com/stephane-caron/mpacklog/releases)
+[![C++ release](https://img.shields.io/github/v/release/tasts-robots/mpacklog.svg?sort=semver)](https://github.com/tasts-robots/mpacklog/releases)
 
 Add a git repository rule to your Bazel ``WORKSPACE``:
 
 ```python
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
-git_repository(
+http_archive(
     name = "mpacklog",
-    remote = "https://github.com/stephane-caron/mpacklog.git",
-    tag = "v2.0.0",
+    sha256 = "dfc16f4c1221cb209856d7efc7ebada5ac2f4ea6235127d3ec39de3d3c414a93",
+    strip_prefix = "mpacklog-3.0.0",
+    url = "https://github.com/tasts-robots/mpacklog/archive/refs/tags/v3.0.0.tar.gz",
 )
 ```
 
