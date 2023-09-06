@@ -28,7 +28,6 @@ from .csv_printer import CSVPrinter
 from .field_printer import FieldPrinter
 from .json_printer import JSONPrinter
 from .printer import Printer
-from .script_printer import ScriptPrinter
 
 
 def get_argument_parser() -> argparse.ArgumentParser:
@@ -127,8 +126,6 @@ def main(argv=None) -> None:
             printer = CSVPrinter(args.fields)
         elif args.format == "json":
             printer = JSONPrinter(args.fields)
-        elif args.format == "python":
-            printer = ScriptPrinter(args.output_dir, args.fields)
         dump_log(args.logfile, printer, follow=args.follow)
     else:  # no subcommand
         parser.print_help()

@@ -8,8 +8,11 @@
 
 ### Changed
 
+- **Breaking:** Clean up unused script printer from CLI
+- **Breaking:** Move C++ version to ``mpacklog.cpp``
 - Bazel: Compile build targets in optimized mode by default
 - Bazel: Compile coverage and test targets in debug mode by default
+- Compile in optimized rather than fast-build mode by default
 
 ## [3.0.0] - 2023/06/06
 
