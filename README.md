@@ -3,36 +3,12 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/tasts-robots/mpacklog/bazel.yml?branch=main)](https://github.com/tasts-robots/mpacklog/actions)
 [![Coverage](https://coveralls.io/repos/github/tasts-robots/mpacklog/badge.svg?branch=main)](https://coveralls.io/github/tasts-robots/mpacklog?branch=main)
 [![Documentation](https://img.shields.io/badge/docs-online-brightgreen?logo=read-the-docs&style=flat)](https://scaron.info/doc/mpacklog/)
-
-Log dictionaries to MessagePack files in C++ and Python.
-
-## Installation
-
-### C++ with Bazel
-
-![C++ version](https://img.shields.io/badge/C++-17/20-blue.svg?style=flat)
-[![C++ release](https://img.shields.io/github/v/release/tasts-robots/mpacklog.svg?sort=semver)](https://github.com/tasts-robots/mpacklog/releases)
-
-Add a git repository rule to your Bazel ``WORKSPACE``:
-
-```python
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-
-http_archive(
-    name = "mpacklog",
-    sha256 = "dfc16f4c1221cb209856d7efc7ebada5ac2f4ea6235127d3ec39de3d3c414a93",
-    strip_prefix = "mpacklog-3.0.0",
-    url = "https://github.com/tasts-robots/mpacklog/archive/refs/tags/v3.0.0.tar.gz",
-)
-```
-
-You can then use the ``@mpacklog`` dependency for C++ targets, or the
-``@mpacklog//:python`` dependency for Python targets.
-
-### Python
-
 [![PyPI version](https://img.shields.io/pypi/v/mpacklog)](https://pypi.org/project/mpacklog/)
 [![PyPI downloads](https://static.pepy.tech/badge/mpacklog)](https://pepy.tech/project/mpacklog)
+
+Log dictionaries to MessagePack files in Python.
+
+## Installation
 
 ```console
 $ pip install mpacklog
@@ -40,31 +16,8 @@ $ pip install mpacklog
 
 ## Usage
 
-### C++
-
-The C++ implementation uses multi-threading. Add messages to the log using the [`put`](https://scaron.info/doc/mpacklog/classmpacklog_1_1Logger.html#af0c278a990b1275b306e89013bb1fac6) function, they will be written to file in the background.
-
-```cpp
-#include <mpacklog/Logger.h>
-#include <palimpsest/Dictionary.h>
-
-int main() {
-    mpacklog::Logger logger("output.mpack");
-
-    for (unsigned bar = 0; bar < 1000u; ++bar) {
-        palimpsest::Dictionary dict;
-        dict("foo") = bar;
-        dict("something") = "else";
-        logger.put(dict):
-    }
-}
-```
-
-### Python
-
-The Python implementation provides both a synchronous and an asynchronous API. 
-
 #### Asynchronous API
+
 Add messages to the log using the [`put`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1logger_1_1Logger.html#aa0f928ac07280acd132627d8545a7e18) function, have them written to file in the separate [`write`](https://scaron.info/doc/mpacklog/classmpacklog_1_1mpacklog_1_1python_1_1logger_1_1Logger.html#acbea9c05c465423efc3f38a25ed699d2) coroutine.
 
 ```python
@@ -81,12 +34,12 @@ async def main_loop(logger):
         await logger.put({"foo": bar, "something": "else"})
     await logger.stop()
 
-
 if __name__ == "__main__":
     asyncio.run(main())
 ```
 
 #### Synchronous API
+
 The Synchronous API is very similar to the Asynchronous API, except it doesn't provide a ``stop`` method and the 
 ``put`` and ``write`` methods are blocking.
 
@@ -100,7 +53,6 @@ for bar in range(1000):
 
 # Flush all messages to the file
 logger.write()
-
 ```
 
 ## Command-line
