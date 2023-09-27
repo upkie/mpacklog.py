@@ -22,7 +22,7 @@ Test the serialization function.
 import unittest
 
 import numpy as np
-from mpacklog.python.serialize import serialize
+from mpacklog.serialize import serialize
 
 
 class FooSerializer:
