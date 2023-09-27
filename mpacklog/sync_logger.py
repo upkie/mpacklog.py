@@ -16,9 +16,9 @@
 # limitations under the License.
 
 import os
+import queue
 
 import msgpack
-import queue
 
 from .serialize import serialize
 
@@ -28,7 +28,8 @@ class SyncLogger:
     """
     Logger with synchronous I/O.
 
-    This logger exposes an API similar to AsyncLogger, but all I/O operations are synchronous.
+    This logger exposes an API similar to AsyncLogger, but all I/O operations
+    are synchronous.
     """
 
     def __init__(self, path):
@@ -36,7 +37,8 @@ class SyncLogger:
         self.path = path
         self.queue = queue.Queue()
 
-        # Check if the file already exists, so that SyncLogger.write doesn't append to an existing file!
+        # Check if the file already exists so that SyncLogger.write doesn't
+        # append to an existing file
         if os.path.exists(self.path):
             raise FileExistsError(f"File {path} already exists!")
 
@@ -56,7 +58,8 @@ class SyncLogger:
 
     def write(self):
         """
-        Writes all messages in the queue to the file, appends to the file if it already exists.
+        Writes all messages in the queue to the file, appends to the file if it
+        already exists.
         """
         with open(self.path, "ab") as file:
             packer = msgpack.Packer(default=serialize, use_bin_type=True)
