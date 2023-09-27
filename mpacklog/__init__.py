@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Log dictionaries to file using the MessagePack serialization format.
-"""
+"""Log dictionaries to file using the MessagePack serialization format."""
 
 __version__ = "3.0.0"
 
