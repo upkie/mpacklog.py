@@ -45,16 +45,12 @@ class TestSyncLogger(unittest.TestCase):
         self.assertTrue(os.path.exists(tmp_file))
 
     def test_write_and_read(self):
-        tmp_file = tempfile.mktemp(suffix=".mpack")
+        tmp_path = tempfile.mktemp(suffix=".mpack")
 
-        logger = SyncLogger(tmp_file)
+        logger = SyncLogger(tmp_path)
         logger.put({"foo": 42, "something": "else"})
         logger.write()
 
-        message = msgpack.load(open(tmp_file, "rb"))
-        self.assertEqual(message, {"foo": 42, "something": "else"})
-        tmp_file.close()
-
-
-if __name__ == "__main__":
-    unittest.main()
+        with open(tmp_path, "rb") as tmp_file:
+            message = msgpack.load(tmp_file)
+            self.assertEqual(message, {"foo": 42, "something": "else"})
