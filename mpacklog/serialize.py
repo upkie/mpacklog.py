@@ -15,27 +15,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Serialization function."""
 
 def serialize(obj):
-    """!
-    Serialize an object for message packing.
+    """Serialize an object for message packing.
 
-    @param obj Object to serialize.
+    Args:
+        obj: Object to serialize.
 
-    @returns Serialized object.
+    Returns:
+        Serialized object.
 
-    @note Calling the numpy conversion is much faster than the default list
-    constructor:
+    Note:
+        Calling the numpy conversion is much faster than the default list
+        constructor:
 
-    @code{python}
-    In [1]: x = random.random(6)
+        ```python
+        In [1]: x = random.random(6)
 
-    In [2]: %timeit list(x)
-    789 ns ± 5.79 ns per loop (mean ± std. dev. of 7 runs, 1e6 loops each)
+        In [2]: %timeit list(x)
+        789 ns ± 5.79 ns per loop (mean ± std. dev. of 7 runs, 1e6 loops each)
 
-    In [3]: %timeit x.tolist()
-    117 ns ± 0.865 ns per loop (mean ± std. dev. of 7 runs, 1e7 loops each)
-    @endcode
+        In [3]: %timeit x.tolist()
+        117 ns ± 0.865 ns per loop (mean ± std. dev. of 7 runs, 1e7 loops each)
+        ```
     """
     if hasattr(obj, "tolist"):  # numpy.ndarray
         return obj.tolist()
