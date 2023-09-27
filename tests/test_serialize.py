@@ -42,7 +42,3 @@ class TestSerialize(unittest.TestCase):
         self.assertEquals(serialize(x), list(x))
         self.assertEquals(serialize(MockPinocchioSE3(x)), list(x))
         self.assertEquals(serialize(foo), {"foo": "bar"})
-
-
-if __name__ == "__main__":
-    unittest.main()
