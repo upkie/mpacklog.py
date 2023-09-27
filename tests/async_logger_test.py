@@ -22,12 +22,11 @@ Test the main logger.
 import os
 import tempfile
 import unittest
-from unittest import IsolatedAsyncioTestCase
 
-from mpacklog.python.async_logger import AsyncLogger
+from mpacklog import AsyncLogger
 
 
-class TestAsyncLogger(IsolatedAsyncioTestCase):
+class TestAsyncLogger(unittest.IsolatedAsyncioTestCase):
     async def test_put(self):
         tmp_file = tempfile.mktemp(suffix=".mpack")
         logger = AsyncLogger(tmp_file)
