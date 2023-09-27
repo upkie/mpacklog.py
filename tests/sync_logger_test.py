@@ -53,6 +53,8 @@ class TestSyncLogger(unittest.TestCase):
 
         message = msgpack.load(open(tmp_file, "rb"))
         self.assertEqual(message, {"foo": 42, "something": "else"})
+        tmp_file.close()
+
 
 if __name__ == "__main__":
     unittest.main()
