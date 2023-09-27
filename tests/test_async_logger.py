@@ -42,7 +42,3 @@ class TestAsyncLogger(unittest.IsolatedAsyncioTestCase):
         await logger.stop()
         await logger.write()
         self.assertTrue(os.path.exists(tmp_file))
-
-
-if __name__ == "__main__":
-    unittest.main()
