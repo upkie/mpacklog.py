@@ -26,9 +26,7 @@ from .serialize import serialize
 
 class AsyncLogger:
 
-    """!
-    Logger with Asynchronous I/O.
-    """
+    """Logger with Asynchronous I/O."""
 
     def __init__(self, path):
         self.__keep_going = True
@@ -36,6 +34,11 @@ class AsyncLogger:
         self.queue = asyncio.Queue()
 
     async def put(self, message):
+        """Put a new message in the logging queue.
+
+        Args:
+            message: New message.
+        """
         await self.queue.put(message)
 
     async def stop(self):
