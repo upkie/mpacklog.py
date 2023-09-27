@@ -21,14 +21,14 @@ Test the main logger.
 
 import os
 import tempfile
-import msgpack
 import unittest
-from unittest import IsolatedAsyncioTestCase
 
-from mpacklog.python.sync_logger import SyncLogger
+import msgpack
+
+from mpacklog import SyncLogger
 
 
-class TestSyncLogger(IsolatedAsyncioTestCase):
+class TestSyncLogger(unittest.TestCase):
     def test_put(self):
         tmp_file = tempfile.mktemp(suffix=".mpack")
         logger = SyncLogger(tmp_file)
