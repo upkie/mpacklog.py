@@ -29,6 +29,11 @@ class AsyncLogger:
     """Logger with Asynchronous I/O."""
 
     def __init__(self, path):
+        """Initialize logger.
+
+        Args:
+            path: Path to the output log file.
+        """
         self.__keep_going = True
         self.path = path
         self.queue = asyncio.Queue()
@@ -42,9 +47,11 @@ class AsyncLogger:
         await self.queue.put(message)
 
     async def stop(self):
+        """Break the loop of the `write` coroutine."""
         self.__keep_going = False
 
     async def write(self):
+        """Continuously write messages from the logging queue to file."""
         file = await aiofiles.open(self.path, "wb")
         packer = msgpack.Packer(default=serialize, use_bin_type=True)
         while self.__keep_going:
