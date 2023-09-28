@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Logger with synchronous I/O."""
+
 import os
 import queue
 
@@ -54,8 +56,9 @@ class SyncLogger:
             self.write()
 
     def write(self):
-        """Writes all messages in the queue to the file, appends to the file if it
-        already exists.
+        """Write all messages in the queue to the file.
+
+        This method appends to the file if it already exists.
         """
         with open(self.path, "ab") as file:
             packer = msgpack.Packer(default=serialize, use_bin_type=True)
