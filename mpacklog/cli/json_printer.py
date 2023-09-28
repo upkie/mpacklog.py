@@ -23,14 +23,12 @@ from .printer import Printer
 
 
 class JSONPrinter(Printer):
-
-    """!
+    """
     Default printer: print everything in JSON Lines.
     """
 
     def __init__(self, fields: Optional[List] = None):
-        """
-        Configure printer options.
+        """Configure printer options.
 
         @param fields If given, only print out these selected fields (nested
             keys in "key1/.../keyN" format).
@@ -38,8 +36,7 @@ class JSONPrinter(Printer):
         self.fields = fields
 
     def process(self, unpacked: dict) -> None:
-        """
-        Process a new unpacked dictionary.
+        """Process a new unpacked dictionary.
 
         @param unpacked Unpacked dictionary.
         """
