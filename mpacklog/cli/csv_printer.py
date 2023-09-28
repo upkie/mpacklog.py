@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Print fields from the input in CSV format."""
+
 from typing import List
 
 from .fields import get_from_field
@@ -22,11 +24,14 @@ from .printer import Printer
 
 
 class CSVPrinter(Printer):
-    """
-    Print a list of fields in CSV format.
-    """
+    """Print fields from the input in CSV format."""
 
     def __init__(self, fields: List[str]):
+        """Initialize printer.
+
+        Args:
+            fields: List of fields to print.
+        """
         if len(fields) < 1:
             raise ValueError("A list of fields is required for the CSV format")
         if fields[0] != "time":
@@ -35,8 +40,7 @@ class CSVPrinter(Printer):
         self.fields = fields
 
     def process(self, unpacked: dict):
-        """
-        Process a new unpacked dictionary.
+        """Process a new unpacked dictionary.
 
         Args:
             unpacked: Unpacked dictionary.
@@ -54,8 +58,7 @@ class CSVPrinter(Printer):
         print(",".join(values))
 
     def finish(self, logfile: str = ""):
-        """
-        Instructions executed once the whole log has been processed.
+        """Instructions executed once the whole log has been processed.
 
         Args:
             logfile: Path to log file.

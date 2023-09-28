@@ -5,6 +5,7 @@
 ### Added
 
 - Bazel: Find clang-format on various operating systems
+- Complete project documentation
 
 ### Changed
 
@@ -13,6 +14,7 @@
 - Bazel: Compile build targets in optimized mode by default
 - Bazel: Compile coverage and test targets in debug mode by default
 - Compile in optimized rather than fast-build mode by default
+- Switch docstring style from Doxygen to Google convention
 
 ## [3.0.0] - 2023/06/06
 
