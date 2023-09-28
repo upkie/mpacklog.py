@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Manipulate MessagePack log files from the command line.
-"""
+"""Manipulate MessagePack log files from the command line."""
 
 import argparse
 import time
@@ -31,8 +29,7 @@ from .printer import Printer
 
 
 def get_argument_parser() -> argparse.ArgumentParser:
-    """
-    Parser for command-line arguments.
+    """Parser for command-line arguments.
 
     Returns:
         Command-line argument parser.
@@ -82,8 +79,7 @@ def get_argument_parser() -> argparse.ArgumentParser:
 
 
 def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
-    """
-    Dump log file.
+    """Dump log file.
 
     Args:
         logfile: Path to input log file.
@@ -110,8 +106,7 @@ def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
 
 
 def main(argv=None) -> None:
-    """
-    Main function for the `mpacklog` command line.
+    """Main function for the `mpacklog` command line.
 
     Args:
         argv: Command-line arguments.

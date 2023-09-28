@@ -24,9 +24,7 @@ from .serialize import serialize
 
 
 class SyncLogger:
-
-    """
-    Logger with synchronous I/O.
+    """Logger with synchronous I/O.
 
     This logger exposes an API similar to AsyncLogger, but all I/O operations
     are synchronous.
@@ -43,8 +41,7 @@ class SyncLogger:
             raise FileExistsError(f"File {path} already exists!")
 
     def put(self, message, write=False):
-        """
-        Puts a message in the queue.
+        """Puts a message in the queue.
 
         Args:
             message (dict): message to log
@@ -57,8 +54,7 @@ class SyncLogger:
             self.write()
 
     def write(self):
-        """
-        Writes all messages in the queue to the file, appends to the file if it
+        """Writes all messages in the queue to the file, appends to the file if it
         already exists.
         """
         with open(self.path, "ab") as file:

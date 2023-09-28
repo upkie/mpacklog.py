@@ -25,7 +25,6 @@ from .serialize import serialize
 
 
 class AsyncLogger:
-
     """Logger with Asynchronous I/O."""
 
     def __init__(self, path):

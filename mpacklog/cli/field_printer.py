@@ -20,18 +20,14 @@ from .printer import Printer
 
 
 class FieldPrinter(Printer):
-
-    """
-    Parse whole log, then finally list all fields encountered.
-    """
+    """Parse whole log, then finally list all fields encountered."""
 
     def __init__(self):
         self.fields = set([])
         self.observation = {}
 
     def process(self, unpacked: dict):
-        """
-        Process a new unpacked dictionary.
+        """Process a new unpacked dictionary.
 
         Args:
             unpacked: Unpacked dictionary.
@@ -46,8 +42,7 @@ class FieldPrinter(Printer):
         self.observation.update(unpacked)
 
     def finish(self, logfile: str):
-        """
-        Instructions executed once the whole log has been processed.
+        """Instructions executed once the whole log has been processed.
 
         Args:
             logfile: Path to input log file.

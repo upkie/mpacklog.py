@@ -21,9 +21,7 @@ from typing import Any, Dict, List, Optional, Union
 
 @dataclass
 class Field:
-
-    """
-    A field stores the key path to a value in input dictionaries. The path
+    """A field stores the key path to a value in input dictionaries. The path
     `"foo/bar/blah"` means the value in a dictionary `input` is located at
     `input["foo"]["bar"]["blah"]`.
     """
@@ -33,17 +31,14 @@ class Field:
 
     @property
     def keys(self):
-        """
-        List of keys to search field values from in input data dictionaries.
-        """
+        """List of keys to search field values from in input data dictionaries."""
         return self.label.split("/")
 
 
 def get_from_keys(
     collection: Union[dict, list], keys: list, default: Optional[Any] = None
 ):
-    """
-    Get value `d[key1][key2][...][keyN]` into a dictionary `d` from keys
+    """Get value `d[key1][key2][...][keyN]` into a dictionary `d` from keys
     `[key1, key2, ..., keyN]`.
 
     Args:
@@ -74,8 +69,7 @@ def get_from_keys(
 def get_from_field(
     collection: Union[dict, list], field: str, default: Optional[Any] = None
 ):
-    """
-    Get value `d[key1][key2][...][keyN]` into a dictionary `d` from its field
+    """Get value `d[key1][key2][...][keyN]` into a dictionary `d` from its field
     "key1/key2/.../keyN".
 
     Args:
@@ -89,8 +83,7 @@ def get_from_field(
 
 
 def list_fields(dictionary: dict, prefix: str = "") -> List[str]:
-    """
-    List all fields available in a given dictionary.
+    """List all fields available in a given dictionary.
 
     Args:
         dictionary: Dictionary.
@@ -109,8 +102,7 @@ def list_fields(dictionary: dict, prefix: str = "") -> List[str]:
 
 
 def print_fields(dictionary: dict, label: str = "") -> None:
-    """
-    Print all fields available in a dictionary.
+    """Print all fields available in a dictionary.
 
     Args:
         dictionary: Dictionary
@@ -123,8 +115,7 @@ def print_fields(dictionary: dict, label: str = "") -> None:
 
 
 def set_from_keys(dictionary: dict, keys: list, value) -> None:
-    """
-    Set the value `d[key1][key2][...][keyN]` into a dictionary `d`.
+    """Set the value `d[key1][key2][...][keyN]` into a dictionary `d`.
 
     Args:
         dictionary: Dictionary to get value from.
@@ -140,8 +131,7 @@ def set_from_keys(dictionary: dict, keys: list, value) -> None:
 
 
 def filter_fields(dictionary: Dict, fields: Optional[List] = None):
-    """
-    Filter selected fields in a dictionary.
+    """Filter selected fields in a dictionary.
 
     Args:
         dictionary: Dictionary to filter.

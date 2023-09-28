@@ -22,8 +22,7 @@ from .printer import Printer
 
 
 class CSVPrinter(Printer):
-
-    """!
+    """
     Print a list of fields in CSV format.
     """
 
@@ -36,7 +35,7 @@ class CSVPrinter(Printer):
         self.fields = fields
 
     def process(self, unpacked: dict):
-        """!
+        """
         Process a new unpacked dictionary.
 
         @param unpacked Unpacked dictionary.
@@ -54,7 +53,7 @@ class CSVPrinter(Printer):
         print(",".join(values))
 
     def finish(self, logfile: str = ""):
-        """!
+        """
         Instructions executed once the whole log has been processed.
 
         @param logfile Path to log file.
