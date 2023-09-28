@@ -15,13 +15,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Manage fields, i.e. nested keys represented as `foo/bar/blah`."""
+
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Union
 
 
 @dataclass
 class Field:
-    """A field stores the key path to a value in input dictionaries. The path
+    """Key path to a value in a nested dictionary.
+
+    A field stores the key path to a value in input dictionaries. The path
     `"foo/bar/blah"` means the value in a dictionary `input` is located at
     `input["foo"]["bar"]["blah"]`.
     """
@@ -30,22 +34,31 @@ class Field:
     plot_right: bool = False
 
     @property
-    def keys(self):
-        """List of keys to search field values from in input data dictionaries."""
+    def keys(self) -> List[str]:
+        """List of keys to search field values from in input dictionaries.
+
+        Returns:
+            List of keys to search field values from in input data
+            dictionaries.
+        """
         return self.label.split("/")
 
 
 def get_from_keys(
     collection: Union[dict, list], keys: list, default: Optional[Any] = None
 ):
-    """Get value `d[key1][key2][...][keyN]` into a dictionary `d` from keys
-    `[key1, key2, ..., keyN]`.
+    """Get value `d[key1][key2][...][keyN]` from a dictionary `d`.
+
+    The corresponding keys are `[key1, key2, ..., keyN]`.
 
     Args:
         collection: Dictionary or list to get value from.
         keys: Sequence of keys to the value.
         default (optional): If provided, return this value if there is nothing
             in `collection` at that field.
+
+    Returns:
+        Value from nested dictionary.
     """
     key = keys[0]
     if isinstance(collection, list):
@@ -69,14 +82,18 @@ def get_from_keys(
 def get_from_field(
     collection: Union[dict, list], field: str, default: Optional[Any] = None
 ):
-    """Get value `d[key1][key2][...][keyN]` into a dictionary `d` from its field
-    "key1/key2/.../keyN".
+    """Get value `d[key1][key2][...][keyN]` from a nested dictionary `d`.
+
+    The corresponding field is "key1/key2/.../keyN".
 
     Args:
         collection: Dictionary or list to get value from.
         field: Field string.
         default (optional): If provided, return this value if there is nothing
             in `collection` at that field.
+
+    Returns:
+        Value in nested dictionary.
     """
     keys = field.split("/")
     return get_from_keys(collection, keys, default)
@@ -87,6 +104,7 @@ def list_fields(dictionary: dict, prefix: str = "") -> List[str]:
 
     Args:
         dictionary: Dictionary.
+        prefix: Prefix built up so far.
 
     Returns:
         List of fields in the dictionary.
