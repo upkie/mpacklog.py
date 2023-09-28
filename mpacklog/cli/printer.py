@@ -17,8 +17,10 @@
 
 
 class Printer:
-    """Base class for printers. A printer processes unpacked dictionaries one by
-    one, and wraps up this data once the whole log has been parsed.
+    """Base class for printers.
+
+    A printer processes unpacked dictionaries one by one, and wraps up this
+    data once the whole log has been parsed.
     """
 
     def process(self, unpacked: dict):
@@ -32,6 +34,7 @@ class Printer:
     def finish(self, logfile: str = ""):
         """Instructions executed once the whole log has been processed.
 
-        @param logfile Path to input log file.
+        Args:
+            logfile: Path to input log file.
         """
         pass

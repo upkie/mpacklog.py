@@ -30,15 +30,17 @@ class JSONPrinter(Printer):
     def __init__(self, fields: Optional[List] = None):
         """Configure printer options.
 
-        @param fields If given, only print out these selected fields (nested
-            keys in "key1/.../keyN" format).
+        Args:
+            fields: If given, only print out these selected fields (nested keys
+                in "key1/.../keyN" format).
         """
         self.fields = fields
 
     def process(self, unpacked: dict) -> None:
         """Process a new unpacked dictionary.
 
-        @param unpacked Unpacked dictionary.
+        Args:
+            unpacked: Unpacked dictionary.
         """
         output_with_nan = json.dumps(
             filter_fields(unpacked, self.fields), allow_nan=True

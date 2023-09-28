@@ -38,7 +38,8 @@ class CSVPrinter(Printer):
         """
         Process a new unpacked dictionary.
 
-        @param unpacked Unpacked dictionary.
+        Args:
+            unpacked: Unpacked dictionary.
         """
 
         def str_from_value(v):
@@ -56,6 +57,7 @@ class CSVPrinter(Printer):
         """
         Instructions executed once the whole log has been processed.
 
-        @param logfile Path to log file.
+        Args:
+            logfile: Path to log file.
         """
         pass
