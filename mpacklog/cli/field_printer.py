@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Parse whole log and list all fields encountered."""
+
 from .fields import list_fields
 from .printer import Printer
 
@@ -23,6 +25,7 @@ class FieldPrinter(Printer):
     """Parse whole log, then finally list all fields encountered."""
 
     def __init__(self):
+        """Initialize field printer."""
         self.fields = set([])
         self.observation = {}
 
