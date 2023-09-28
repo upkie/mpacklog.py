@@ -17,6 +17,7 @@
 
 """Serialization function."""
 
+
 def serialize(obj):
     """Serialize an object for message packing.
 
