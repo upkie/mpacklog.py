@@ -8,13 +8,8 @@
 
 ### Changed
 
-- **Breaking:** Move C++ version to ``mpacklog.cpp``
-- Compile in optimized rather than fast-build mode by default
+- Move C++ version to ``mpacklog.cpp``
 - Switch docstring style from Doxygen to Google convention
-
-### Fixed
-
-- Compile in optimized rather than fast-build mode by default
 
 ### Removed
 
