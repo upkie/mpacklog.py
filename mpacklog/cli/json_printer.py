@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""JSON Lines printer."""
+
 import json
 from typing import List, Optional
 
@@ -23,9 +25,7 @@ from .printer import Printer
 
 
 class JSONPrinter(Printer):
-    """
-    Default printer: print everything in JSON Lines.
-    """
+    """Default printer: print everything in JSON Lines."""
 
     def __init__(self, fields: Optional[List] = None):
         """Configure printer options.
