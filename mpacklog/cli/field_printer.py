@@ -44,7 +44,7 @@ class FieldPrinter(Printer):
         self.fields = set.union(self.fields, new_fields)
         self.observation.update(unpacked)
 
-    def finish(self, logfile: str):
+    def finish(self, logfile: str = ""):
         """Instructions executed once the whole log has been processed.
 
         Args:

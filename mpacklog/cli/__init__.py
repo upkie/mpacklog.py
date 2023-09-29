@@ -114,7 +114,7 @@ def main(argv=None) -> None:
     parser = get_argument_parser()
     args = parser.parse_args(argv)
     if args.subcmd == "list":
-        printer = FieldPrinter()
+        printer: Printer = FieldPrinter()
         dump_log(args.logfile, printer)
     elif args.subcmd == "dump":
         if args.format == "csv":

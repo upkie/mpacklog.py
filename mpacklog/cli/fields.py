@@ -161,7 +161,7 @@ def filter_fields(dictionary: Dict, fields: Optional[List] = None):
     """
     if not fields:
         return dictionary
-    output = {}
+    output: dict = {}
     for field in fields:
         keys = field.split("/")
         try:
