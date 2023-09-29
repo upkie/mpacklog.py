@@ -40,8 +40,7 @@ if __name__ == "__main__":
 
 #### Synchronous API
 
-The Synchronous API is very similar to the Asynchronous API, except it doesn't provide a ``stop`` method and the 
-``put`` and ``write`` methods are blocking.
+The synchronous API is similar to the asynchronous API, except it doesn't provide a ``stop`` method and the ``put`` and ``write`` methods are blocking.
 
 ```python
 import mpacklog
