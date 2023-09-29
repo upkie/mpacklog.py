@@ -31,7 +31,6 @@ class Printer:
         Args:
             unpacked: Unpacked dictionary.
         """
-        pass
 
     def finish(self, logfile: str = ""):
         """Instructions executed once the whole log has been processed.
@@ -39,4 +38,3 @@ class Printer:
         Args:
             logfile: Path to input log file.
         """
-        pass

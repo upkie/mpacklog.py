@@ -86,22 +86,21 @@ def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
         printer: Printer class to process unpacked messages.
         follow (optional): Keep file open and wait for updates?
     """
-    filehandle = open(logfile, "rb")
-    unpacker = msgpack.Unpacker(raw=False)
-    while True:
-        data = filehandle.read(4096)
-        if not data:  # end of file
-            if follow:
-                time.sleep(0.001)
-                continue
-            else:  # not follow
+    with open(logfile, "rb") as filehandle:
+        unpacker = msgpack.Unpacker(raw=False)
+        while True:
+            data = filehandle.read(4096)
+            if not data:  # end of file
+                if follow:
+                    time.sleep(0.001)
+                    continue
                 break
-        unpacker.feed(data)
-        try:
-            for unpacked in unpacker:
-                printer.process(unpacked)
-        except BrokenPipeError:  # handle e.g. piping to `head`
-            break
+            unpacker.feed(data)
+            try:
+                for unpacked in unpacker:
+                    printer.process(unpacked)
+            except BrokenPipeError:  # handle e.g. piping to `head`
+                break
     printer.finish(logfile)
 
 
