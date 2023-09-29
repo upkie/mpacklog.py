@@ -101,7 +101,6 @@ def dump_log(logfile: str, printer: Printer, follow: bool = False) -> None:
                     printer.process(unpacked)
             except BrokenPipeError:  # handle e.g. piping to `head`
                 break
-    printer.finish(logfile)
 
 
 def main(argv=None) -> None:

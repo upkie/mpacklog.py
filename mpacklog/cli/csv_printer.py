@@ -56,10 +56,3 @@ class CSVPrinter(Printer):
             for field in self.fields
         ]
         print(",".join(values))
-
-    def finish(self, logfile: str = ""):
-        """Instructions executed once the whole log has been processed.
-
-        Args:
-            logfile: Path to log file.
-        """
