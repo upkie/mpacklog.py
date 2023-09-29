@@ -17,6 +17,7 @@
 
 """Output printers."""
 
+
 class Printer:
     """Base class for printers.
 
