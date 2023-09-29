@@ -46,10 +46,10 @@ class CSVPrinter(Printer):
             unpacked: Unpacked dictionary.
         """
 
-        def str_from_value(v):
-            if isinstance(v, bool):
-                return "1" if v else "0"
-            return str(v)
+        def str_from_value(value):
+            if isinstance(value, bool):
+                return "1" if value else "0"
+            return str(value)
 
         values = [
             str_from_value(get_from_field(unpacked, field, default="0"))
@@ -63,4 +63,3 @@ class CSVPrinter(Printer):
         Args:
             logfile: Path to log file.
         """
-        pass

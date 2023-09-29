@@ -38,7 +38,6 @@ class SyncLogger:
         Args:
             path: Path to the output log file.
         """
-        self.__keep_going = True
         self.path = path
         self.queue = queue.Queue()
 

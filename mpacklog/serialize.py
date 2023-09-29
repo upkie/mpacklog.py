@@ -43,8 +43,8 @@ def serialize(obj):
     """
     if hasattr(obj, "tolist"):  # numpy.ndarray
         return obj.tolist()
-    elif hasattr(obj, "np"):  # pinocchio.SE3
+    if hasattr(obj, "np"):  # pinocchio.SE3
         return obj.np.tolist()
-    elif hasattr(obj, "serialize"):  # more complex objects
+    if hasattr(obj, "serialize"):  # more complex objects
         return obj.serialize()
     return obj

@@ -73,10 +73,10 @@ def get_from_keys(
         return child
     try:
         return get_from_keys(child, keys[1:])
-    except KeyError as e:
+    except KeyError as exn:
         if default is not None:
             return default
-        raise KeyError(f"{key}/{str(e)[1:-1]}")
+        raise KeyError(f"{key}/{str(exn)[1:-1]}") from exn
 
 
 def get_from_field(
@@ -144,7 +144,7 @@ def set_from_keys(dictionary: dict, keys: list, value) -> None:
     if len(keys) > 1:
         if key not in dictionary:
             dictionary[key] = {}
-        return set_from_keys(dictionary[key], keys[1:], value)
+        set_from_keys(dictionary[key], keys[1:], value)
     dictionary[key] = value
 
 
@@ -167,6 +167,6 @@ def filter_fields(dictionary: Dict, fields: Optional[List] = None):
         try:
             value = get_from_field(dictionary, field)
             set_from_keys(output, keys, value)
-        except KeyError as e:
-            print(f"Field {str(e)} not found when looking up '{field}'")
+        except KeyError as exn:
+            print(f"Field {str(exn)} not found when looking up '{field}'")
     return output
