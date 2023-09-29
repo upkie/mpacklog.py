@@ -17,7 +17,7 @@
 
 """Log dictionaries to file using the MessagePack serialization format."""
 
-__version__ = "3.0.0"
+__version__ = "3.1.0"
 
 from .async_logger import AsyncLogger
 from .sync_logger import SyncLogger
