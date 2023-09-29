@@ -4,17 +4,22 @@
 
 ### Added
 
-- Bazel: Find clang-format on various operating systems
 - Complete project documentation
 
 ### Changed
 
-- **Breaking:** Clean up unused script printer from CLI
 - **Breaking:** Move C++ version to ``mpacklog.cpp``
-- Bazel: Compile build targets in optimized mode by default
-- Bazel: Compile coverage and test targets in debug mode by default
 - Compile in optimized rather than fast-build mode by default
 - Switch docstring style from Doxygen to Google convention
+
+### Fixed
+
+- Compile in optimized rather than fast-build mode by default
+
+### Removed
+
+- Unused script printer from CLI
+- Unused `finish` function from CLI printers
 
 ## [3.0.0] - 2023/06/06
 
