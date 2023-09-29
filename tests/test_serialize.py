@@ -22,6 +22,7 @@ Test the serialization function.
 import unittest
 
 import numpy as np
+
 from mpacklog.serialize import serialize
 
 
@@ -39,6 +40,6 @@ class TestSerialize(unittest.TestCase):
     def test_serialize(self):
         foo = FooSerializer()
         x = np.array([1, 2, 3])
-        self.assertEquals(serialize(x), list(x))
-        self.assertEquals(serialize(MockPinocchioSE3(x)), list(x))
-        self.assertEquals(serialize(foo), {"foo": "bar"})
+        self.assertEqual(serialize(x), list(x))
+        self.assertEqual(serialize(MockPinocchioSE3(x)), list(x))
+        self.assertEqual(serialize(foo), {"foo": "bar"})
