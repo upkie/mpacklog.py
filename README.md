@@ -1,4 +1,4 @@
-# mpacklog
+# mpacklog.py
 
 [![Build](https://img.shields.io/github/actions/workflow/status/tasts-robots/mpacklog.py/ci.yml?branch=main)](https://github.com/tasts-robots/mpacklog.py/actions)
 [![Coverage](https://coveralls.io/repos/github/tasts-robots/mpacklog.py/badge.svg?branch=main)](https://coveralls.io/github/tasts-robots/mpacklog.py?branch=main)
