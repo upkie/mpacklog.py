@@ -1,7 +1,7 @@
 # mpacklog.py
 
-[![Build](https://img.shields.io/github/actions/workflow/status/tasts-robots/mpacklog.py/ci.yml?branch=main)](https://github.com/tasts-robots/mpacklog.py/actions)
-[![Coverage](https://coveralls.io/repos/github/tasts-robots/mpacklog.py/badge.svg?branch=main)](https://coveralls.io/github/tasts-robots/mpacklog.py?branch=main)
+[![Build](https://img.shields.io/github/actions/workflow/status/upkie/mpacklog.py/ci.yml?branch=main)](https://github.com/upkie/mpacklog.py/actions)
+[![Coverage](https://coveralls.io/repos/github/upkie/mpacklog.py/badge.svg?branch=main)](https://coveralls.io/github/upkie/mpacklog.py?branch=main)
 [![PyPI version](https://img.shields.io/pypi/v/mpacklog)](https://pypi.org/project/mpacklog/)
 [![PyPI downloads](https://static.pepy.tech/badge/mpacklog)](https://pepy.tech/project/mpacklog)
 

@@ -37,9 +37,9 @@ doc = ["sphinx"]
 mpacklog = "mpacklog.cli:main"
 
 [project.urls]
-Source = "https://github.com/tasts-robots/mpacklog.py"
-Tracker = "https://github.com/tasts-robots/mpacklog.py/issues"
-Changelog = "https://github.com/tasts-robots/mpacklog.py/blob/master/CHANGELOG.md"
+Source = "https://github.com/upkie/mpacklog.py"
+Tracker = "https://github.com/upkie/mpacklog.py/issues"
+Changelog = "https://github.com/upkie/mpacklog.py/blob/master/CHANGELOG.md"
 
 [tool.black]
 line-length = 79
