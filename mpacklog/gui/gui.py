@@ -5,7 +5,7 @@
 # Copyright 2023 mjbots Robotic Systems, LLC.  info@mjbots.com
 # Copyright 2024 Inria
 #
-# This file incorporates work from utils/gui/moteus_gui/tview.py
+# This file incorporates code from utils/gui/moteus_gui/tview.py
 # (https://github.com/mjbots/moteus, 49c698a63f0ded22528ad7539cc2e27e41cd486d)
 
 """Interactively display and update values from an embedded device."""
@@ -25,8 +25,7 @@ import moteus
 import moteus.moteus_tool
 import moteus.reader as reader
 import numpy
-from PySide2 import QtGui, QtUiTools
-from qtconsole.history_console_widget import HistoryConsoleWidget
+from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
 
 os.environ["QT_API"] = "pyside2"
@@ -321,42 +320,6 @@ class SizedTreeWidget(QtWidgets.QTreeWidget):
 
     def sizeHint(self):
         return QtCore.QSize(350, 500)
-
-
-class TviewConsoleWidget(HistoryConsoleWidget):
-    line_input = QtCore.Signal(str)
-
-    def __init__(self, *args, **kw):
-        super(TviewConsoleWidget, self).__init__(*args, **kw)
-
-        self.execute_on_complete_input = False
-        self._prompt = ">>> "
-        self.clear()
-
-        # The bionic version of ConsoleWidget seems to get the cursor
-        # position screwed up after a clear.  Let's just fix it up
-        # here.
-        self._append_before_prompt_cursor.setPosition(0)
-
-    def sizeHint(self):
-        return QtCore.QSize(600, 200)
-
-    def add_text(self, data):
-        assert data.endswith("\n") or data.endswith("\r")
-        self._append_plain_text(_console_escape(data), before_prompt=True)
-        self._control.moveCursor(QtGui.QTextCursor.End)
-
-    def _handle_timeout(self):
-        self._append_plain_text("%s\r\n" % time.time(), before_prompt=True)
-        self._control.moveCursor(QtGui.QTextCursor.End)
-
-    def _is_complete(self, source, interactive):
-        return True, False
-
-    def _execute(self, source, hidden):
-        self.line_input.emit(source)
-        self._show_prompt(self._prompt)
-        return True
 
 
 class Record:
@@ -907,7 +870,7 @@ class Device:
         return item
 
 
-class TviewMainWindow:
+class MpacklogMainWindow:
     def __init__(self, options, parent=None):
         self.options = options
         self.port = None
@@ -1300,9 +1263,8 @@ def main():
     # To work around https://bugreports.qt.io/browse/PYSIDE-88
     app.aboutToQuit.connect(lambda: os._exit(0))
 
-    tv = TviewMainWindow(args)
-    tv.show()
-
+    window = MpacklogMainWindow(args)
+    window.show()
     app.exec_()
 
 
