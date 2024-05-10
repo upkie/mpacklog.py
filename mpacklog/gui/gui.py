@@ -27,15 +27,8 @@ import asyncqt  # noqa: E402
 from plot_widget import PlotWidget  # noqa: E402
 
 DEFAULT_RATE = 100
-MAX_HISTORY_SIZE = 100
-MAX_SEND = 61
-POLL_TIMEOUT_S = 0.1
-STARTUP_TIMEOUT_S = 0.5
-
 FORMAT_ROLE = QtCore.Qt.UserRole + 1
-
-FMT_STANDARD = 0
-FMT_HEX = 1
+MAX_HISTORY_SIZE = 100
 
 
 def _get_data(value, name):
@@ -94,12 +87,7 @@ def _set_tree_widget_data(item, struct, element, terminal_flags=None):
                 child, field, child_element, terminal_flags=terminal_flags
             )
     else:
-        maybe_format = item.data(1, FORMAT_ROLE)
-        text = None
-        if maybe_format == FMT_HEX and type(struct) == int:
-            text = f"{struct:x}"
-        else:
-            text = repr(struct)
+        text = repr(struct)
         item.setText(1, text)
 
 
@@ -132,7 +120,6 @@ class RecordSignal(object):
 class Record:
     def __init__(self, archive):
         self.archive = archive
-        self.tree_item = None
         self.signals = {}
         self.history = []
 
@@ -161,14 +148,6 @@ class Record:
             if signal.update(value):
                 count += 1
         return count != 0
-
-
-def _get_item_name(item):
-    name = item.text(0)
-    while item.parent() and item.parent().parent():
-        name = item.parent().text(0) + "." + name
-        item = item.parent()
-    return name
 
 
 def _get_item_root(item):
@@ -219,8 +198,6 @@ class MpacklogMainWindow:
             self._handle_plot_item_remove
         )
 
-        # self.ui.tabifyDockWidget(self.ui.telemetryDock)
-
         layout = QtWidgets.QVBoxLayout(self.ui.plotHolderWidget)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
@@ -228,34 +205,49 @@ class MpacklogMainWindow:
         self.ui.plotWidget = PlotWidget(self.ui.plotHolderWidget)
         layout.addWidget(self.ui.plotWidget)
 
-        def update_plotwidget(value):
+        def update_plot_widget(value):
             self.ui.plotWidget.history_s = value
 
-        self.ui.historySpin.valueChanged.connect(update_plotwidget)
+        self.ui.historySpin.valueChanged.connect(update_plot_widget)
 
         QtCore.QTimer.singleShot(0, self._handle_startup)
         self.stream_client = stream_client
+        self.tree = {}
 
     def show(self):
         self.ui.show()
 
     def _handle_startup(self):
-        asyncio.create_task(self._run_transport())
         self.ui.telemetryTreeWidget.clear()
+        data = self.stream_client.read()
+        self.tree = {}
+        self.update_telemetry(self.ui.telemetryTreeWidget, data, self.tree)
+        asyncio.create_task(self._run())
 
-    async def _run_transport(self):
-        any_data_read = False
+    def update_telemetry(self, item, data, tree: dict):
+        tree["__item__"] = item
+        if isinstance(data, dict):
+            for key, value in data.items():
+                child = QtWidgets.QTreeWidgetItem(item)
+                child.setText(0, key)
+                tree[key] = {}
+                self.update_telemetry(child, value, tree[key])
+
+    async def _run(self):
         while True:
-            # We only sleep if no devices had anything to report the last
-            # cycle.
-            if not any_data_read:
-                await asyncio.sleep(0.01)
+            data = self.stream_client.read()
+            self.update_data(data, self.tree)
+            await asyncio.sleep(0.01)
 
-            any_data_read = await self._run_transport_iteration()
-
-    async def _run_transport_iteration(self):
-        any_data_read = False
-        return any_data_read
+    def update_data(self, data, tree):
+        item = tree["__item__"]
+        if isinstance(data, dict):
+            for key, value in data.items():
+                self.update_data(value, tree[key])
+        else:  # data is not a dictionary
+            item.setText(1, str(data))
+            if "__record__" in tree:
+                tree["__record__"].update(data)
 
     def _handle_tree_expanded(self, item):
         self.ui.telemetryTreeWidget.resizeColumnToContents(0)
@@ -276,69 +268,41 @@ class MpacklogMainWindow:
         menu = QtWidgets.QMenu(self.ui)
         left_action = menu.addAction("Plot Left")
         right_action = menu.addAction("Plot Right")
-        left_std_action = menu.addAction("Plot StdDev Left")
-        right_std_action = menu.addAction("Plot StdDev Right")
-        left_mean_action = menu.addAction("Plot Mean Left")
-        right_mean_action = menu.addAction("Plot Mean Right")
 
         plot_actions = [
             left_action,
             right_action,
-            left_std_action,
-            right_std_action,
-            left_mean_action,
-            right_mean_action,
         ]
 
-        right_actions = [right_action, right_std_action, right_mean_action]
-        std_actions = [left_std_action, right_std_action]
-        mean_actions = [left_mean_action, right_mean_action]
+        right_actions = [right_action]
 
         menu.addSeparator()
         copy_name = menu.addAction("Copy Name")
         copy_value = menu.addAction("Copy Value")
 
-        menu.addSeparator()
-        fmt_standard_action = menu.addAction("Standard Format")
-        fmt_hex_action = menu.addAction("Hex Format")
-
         requested = menu.exec_(self.ui.telemetryTreeWidget.mapToGlobal(pos))
 
         if requested in plot_actions:
             top = item
-            while top.parent().parent():
+            keys = []
+            while top:
+                keys.append(top.text(0))
                 top = top.parent()
-
-            schema = top.data(0, QtCore.Qt.UserRole)
-            record = schema.record
-
-            name = _get_item_name(item)
-
-            leaf = name.split(".", 1)[1]
-            axis = 0
-            if requested in right_actions:
-                axis = 1
-
-            if requested in std_actions:
-                leaf = "__STDDEV_" + leaf
-                name = "stddev " + name
-
-            if requested in mean_actions:
-                leaf = "__MEAN_" + leaf
-                name = "mean " + name
-
-            plot_item = self.ui.plotWidget.add_plot(
-                name, record.get_signal(leaf), axis
-            )
+            keys.reverse()
+            name = ".".join(keys)
+            print(f"{name=}")
+            node = self.tree
+            for key in keys:
+                node = node[key]
+            record_signal = RecordSignal()
+            node["__record__"] = record_signal
+            axis = 1 if requested in right_actions else 0
+            plot_item = self.ui.plotWidget.add_plot(name, record_signal, axis)
             self.ui.plotItemCombo.addItem(name, plot_item)
         elif requested == copy_name:
             QtWidgets.QApplication.clipboard().setText(item.text(0))
         elif requested == copy_value:
             QtWidgets.QApplication.clipboard().setText(item.text(1))
-        elif requested == fmt_standard_action:
-            item.setData(1, FORMAT_ROLE, FMT_STANDARD)
-        elif requested == fmt_hex_action:
-            item.setData(1, FORMAT_ROLE, FMT_HEX)
         else:  # the user cancelled
             pass
 
