@@ -141,12 +141,22 @@ class MpacklogMainWindow:
                 child.setText(0, key)
                 tree[key] = {}
                 self.update_tree(child, data[key], tree[key])
+        elif isinstance(data, list):
+            for index, value in enumerate(data):
+                key = str(index)
+                child = QtWidgets.QTreeWidgetItem(item)
+                child.setText(0, key)
+                tree[key] = {}
+                self.update_tree(child, value, tree[key])
 
     def update_data(self, data, tree):
         item = tree["__item__"]
         if isinstance(data, dict):
             for key, value in data.items():
                 self.update_data(value, tree[key])
+        elif isinstance(data, list):
+            for key, value in enumerate(data):
+                self.update_data(value, tree[str(key)])
         else:  # data is not a dictionary
             item.setText(1, format_value(data))
             if "__record__" in tree:
