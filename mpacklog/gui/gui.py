@@ -1,78 +1,42 @@
-#!/usr/bin/python3 -B
-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# SPDX-License-Identifier: Apache-2.0
 # Copyright 2023 mjbots Robotic Systems, LLC.  info@mjbots.com
+# Copyright 2024 Inria
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# This file incorporates work from utils/gui/moteus_gui/tview.py
+# (https://github.com/mjbots/moteus, 49c698a63f0ded22528ad7539cc2e27e41cd486d)
 
-'''Interactively display and update values from an embedded device.
-'''
+"""Interactively display and update values from an embedded device."""
 
 import argparse
 import asyncio
 import io
-import moteus
-import moteus.moteus_tool
-import numpy
 import os
 import re
 import struct
 import sys
 import time
-import traceback
+
 import matplotlib
 import matplotlib.figure
-
-try:
-    import PySide6
-    from PySide6 import QtGui
-
-    os.environ['PYSIDE_DESIGNER_PLUGINS'] = os.path.dirname(os.path.abspath(__file__))
-    os.environ['QT_API'] = 'PySide6'
-    from PySide6 import QtUiTools
-except ImportError:
-    import PySide2
-    from PySide2 import QtGui
-    os.environ['QT_API'] = 'pyside2'
-    from PySide2 import QtUiTools
-
-
-from matplotlib.backends import backend_qt5agg
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-qt_backend = matplotlib.backends.backend_qt5agg
-
-
-import qtconsole
-from qtconsole.history_console_widget import HistoryConsoleWidget
-if getattr(qtconsole, "qt", None):
-    from qtconsole.qt import QtCore, QtGui
-    QtWidgets = QtGui
-else:
-    from qtpy import QtCore, QtGui, QtWidgets
-
-# Why this is necessary and not just the default, I don't know, but
-# otherwise we get a warning about "Qt WebEngine seems to be
-# initialized from a plugin..."
-QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
-
-if os.environ['QT_API'] == 'pyside6':
-    # Something can override our request.  Put it back to the correct
-    # capitalization for asyncqt.
-    os.environ['QT_API'] = 'PySide6'
-
-import asyncqt
-
+import moteus
+import moteus.moteus_tool
 import moteus.reader as reader
+import numpy
+from PySide2 import QtGui, QtUiTools
+from qtconsole.history_console_widget import HistoryConsoleWidget
+from qtpy import QtCore, QtWidgets
 
+os.environ["QT_API"] = "pyside2"
+
+import asyncqt  # noqa: E402
+from matplotlib.backends.backend_qt5agg import (  # noqa: E402
+    FigureCanvasQTAgg as FigureCanvas,
+)
+
+qt_backend = matplotlib.backends.backend_qt5agg
 
 LEFT_LEGEND_LOC = 3
 RIGHT_LEGEND_LOC = 2
@@ -98,9 +62,8 @@ def _has_nonascii(data):
     return any([ord(x) > 127 for x in data])
 
 
-# TODO jpieper: Factor these out of tplot.py
 def _get_data(value, name):
-    fields = name.split('.')
+    fields = name.split(".")
     for field in fields:
         if isinstance(value, list):
             value = value[int(field)]
