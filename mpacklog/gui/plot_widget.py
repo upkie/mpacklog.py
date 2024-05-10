@@ -20,12 +20,17 @@ from qtpy import QtCore, QtWidgets
 
 qt_backend = matplotlib.backends.backend_qt5agg
 
-LEFT_LEGEND_LOC = 3
-RIGHT_LEGEND_LOC = 2
-
 
 class PlotWidget(QtWidgets.QWidget):
+    """Plot widget.
+
+    Attributes:
+        history_s: History duration, in seconds.
+    """
+
     COLORS = "rbgcmyk"
+
+    history_s: float
 
     def __init__(self, *args, **kwargs):
         QtWidgets.QWidget.__init__(self, *args, **kwargs)
@@ -33,7 +38,6 @@ class PlotWidget(QtWidgets.QWidget):
         self.history_s = 20.0
         self.next_color = 0
         self.paused = False
-
         self.last_draw_time = 0.0
 
         self.figure = matplotlib.figure.Figure()
@@ -46,9 +50,7 @@ class PlotWidget(QtWidgets.QWidget):
         self.left_axis = self.figure.add_subplot(111)
         self.left_axis.grid()
         self.left_axis.fmt_xdata = lambda x: "%.3f" % x
-
-        self.left_axis.legend_loc = LEFT_LEGEND_LOC
-
+        self.left_axis.legend_loc = 3
         self.right_axis = None
 
         self.toolbar = qt_backend.NavigationToolbar2QT(self.canvas, self)
@@ -71,7 +73,7 @@ class PlotWidget(QtWidgets.QWidget):
         if axis_number == 1:
             if self.right_axis is None:
                 self.right_axis = self.left_axis.twinx()
-                self.right_axis.legend_loc = RIGHT_LEGEND_LOC
+                self.right_axis.legend_loc = 2
             axis = self.right_axis
         item = PlotItem(axis, self, name, signal)
         return item
