@@ -18,6 +18,7 @@ import moteus.reader as reader
 import numpy
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
+from sized_tree_widget import SizedTreeWidget
 from stream_client import StreamClient
 
 os.environ["QT_API"] = "pyside2"
@@ -35,15 +36,6 @@ FORMAT_ROLE = QtCore.Qt.UserRole + 1
 
 FMT_STANDARD = 0
 FMT_HEX = 1
-
-
-class CommandError(RuntimeError):
-    def __init__(self, cmd, err):
-        super(CommandError, self).__init__(f'CommandError: "{cmd}" => "{err}"')
-
-
-def _has_nonascii(data):
-    return any([ord(x) > 127 for x in data])
 
 
 def _get_data(value, name):
@@ -111,12 +103,6 @@ def _set_tree_widget_data(item, struct, element, terminal_flags=None):
         item.setText(1, text)
 
 
-def _console_escape(value):
-    if "\x00" in value:
-        return value.replace("\x00", "*")
-    return value
-
-
 class RecordSignal(object):
     def __init__(self):
         self._index = 0
@@ -143,17 +129,6 @@ class RecordSignal(object):
         return len(self._callbacks) != 0
 
 
-class SizedTreeWidget(QtWidgets.QTreeWidget):
-    def __init__(self, parent=None):
-        QtWidgets.QTreeWidget.__init__(self, parent)
-        self.setColumnCount(2)
-        self.headerItem().setText(0, "Name")
-        self.headerItem().setText(1, "Value")
-
-    def sizeHint(self):
-        return QtCore.QSize(350, 500)
-
-
 class Record:
     def __init__(self, archive):
         self.archive = archive
@@ -164,7 +139,6 @@ class Record:
     def get_signal(self, name):
         if name not in self.signals:
             self.signals[name] = RecordSignal()
-
         return self.signals[name]
 
     def update(self, struct):
@@ -189,59 +163,11 @@ class Record:
         return count != 0
 
 
-class NoEditDelegate(QtWidgets.QStyledItemDelegate):
-    def __init__(self, parent=None):
-        QtWidgets.QStyledItemDelegate.__init__(self, parent=parent)
-
-    def createEditor(self, parent, option, index):
-        return None
-
-
-class EditDelegate(QtWidgets.QStyledItemDelegate):
-    def __init__(self, parent=None):
-        QtWidgets.QStyledItemDelegate.__init__(self, parent=parent)
-
-    def createEditor(self, parent, option, index):
-        maybe_schema = index.data(QtCore.Qt.UserRole)
-
-        if maybe_schema is not None and (
-            isinstance(maybe_schema, reader.EnumType)
-            or isinstance(maybe_schema, reader.BooleanType)
-        ):
-            editor = QtWidgets.QComboBox(parent)
-
-            if isinstance(maybe_schema, reader.EnumType):
-                options = list(maybe_schema.enum_class)
-                options_text = [repr(x) for x in options]
-                editor.setEditable(True)
-                editor.lineEdit().editingFinished.connect(
-                    self.commitAndCloseEditor
-                )
-            elif isinstance(maybe_schema, reader.BooleanType):
-                options_text = ["False", "True"]
-                editor.activated.connect(self.commitAndCloseEditor)
-
-            editor.insertItems(0, options_text)
-
-            return editor
-        else:
-            return super(EditDelegate, self).createEditor(
-                parent, option, index
-            )
-
-    def commitAndCloseEditor(self):
-        editor = self.sender()
-
-        self.commitData.emit(editor)
-        self.closeEditor.emit(editor)
-
-
 def _get_item_name(item):
     name = item.text(0)
     while item.parent() and item.parent().parent():
         name = item.parent().text(0) + "." + name
         item = item.parent()
-
     return name
 
 
