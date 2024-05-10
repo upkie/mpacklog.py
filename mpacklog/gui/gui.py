@@ -29,7 +29,7 @@ def format_value(value) -> str:
     return f"{value:.2g}" if isinstance(value, float) else str(value)
 
 
-class RecordSignal(object):
+class PlotCallback(object):
     def __init__(self):
         self._index = 0
         self._callbacks = {}
@@ -49,7 +49,16 @@ class RecordSignal(object):
 
         return Connection(self, result)
 
-    def update(self, value):
+    def update(self, value) -> bool:
+        """Append a new value to plot data.
+
+        Args:
+            value: New value.
+
+        Returns:
+            True if the update was successful, False if the callback is
+            disconnected.
+        """
         for handler in self._callbacks.values():
             handler(value)
         return len(self._callbacks) != 0
@@ -154,8 +163,10 @@ class MpacklogMainWindow:
                 self.update_data(value, tree[str(key)])
         else:  # data is not a dictionary
             item.setText(1, format_value(data))
-            if "__record__" in tree:
-                tree["__record__"].update(data)
+            if "__plot__" in tree:
+                active = tree["__plot__"].update(data)
+                if not active:
+                    del tree["__plot__"]
 
     def handle_tree_expanded(self, item):
         self.ui.telemetryTreeWidget.resizeColumnToContents(0)
@@ -194,10 +205,10 @@ class MpacklogMainWindow:
             node = self.tree
             for key in keys:
                 node = node[key]
-            record_signal = RecordSignal()
-            node["__record__"] = record_signal
+            callback = PlotCallback()
+            node["__plot__"] = callback
             axis = 1 if requested == plot_right_action else 0
-            plot_item = self.ui.plotWidget.add_plot(name, record_signal, axis)
+            plot_item = self.ui.plotWidget.add_plot(name, callback, axis)
             self.ui.plotItemCombo.addItem(name, plot_item)
         elif requested == copy_name_action:
             QtWidgets.QApplication.clipboard().setText(item.text(0))
