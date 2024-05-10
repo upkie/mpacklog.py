@@ -27,6 +27,14 @@ from plot_widget import PlotWidget  # noqa: E402
 
 
 def format_value(value) -> str:
+    """Format incoming values for the Values column.
+
+    Args:
+        value: Value to format as a string.
+
+    Returns:
+        Value formatted as a string.
+    """
     return f"{value:.2g}" if isinstance(value, float) else str(value)
 
 
@@ -41,7 +49,6 @@ class MpacklogMainWindow:
 
     def __init__(self, host: str, port: int, parent=None):
         stream_client = StreamClient(host, port)
-        self.user_task = None
 
         current_script_dir = os.path.dirname(os.path.abspath(__file__))
         uifilename = os.path.join(current_script_dir, "mpacklog.ui")
@@ -98,6 +105,7 @@ class MpacklogMainWindow:
         asyncio.create_task(self.run())
 
     async def run(self):
+        """Main loop of the application."""
         while True:
             data = self.stream_client.read()
             self.update_data(data, self.tree)
@@ -192,7 +200,7 @@ class MpacklogMainWindow:
         self.ui.plotItemCombo.removeItem(index)
 
 
-def main():
+if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     loop = asyncqt.QEventLoop(app)
     asyncio.set_event_loop(loop)
@@ -203,7 +211,3 @@ def main():
     window = MpacklogMainWindow("localhost", 4747)
     window.show()
     app.exec_()
-
-
-if __name__ == "__main__":
-    main()
