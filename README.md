@@ -5,7 +5,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/mpacklog)](https://pypi.org/project/mpacklog/)
 [![PyPI downloads](https://static.pepy.tech/badge/mpacklog)](https://pepy.tech/project/mpacklog)
 
-Log dictionaries to MessagePack files in Python.
+Stream dictionaries to files or over the network using MessagePack in Python.
 
 ## Installation
 

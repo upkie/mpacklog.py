@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- CICD: Update ruff to 0.4.3
+- Use SPDX license identifiers in all source files
+
 ## [3.1.0] - 2023/09/29
 
 ### Added
