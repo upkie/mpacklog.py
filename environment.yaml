@@ -1,0 +1,10 @@
+name: mpacklog
+channels:
+    - https://conda.anaconda.org/conda-forge
+dependencies:
+    - asyncqt
+    - matplotlib
+    - msgpack-python
+    - pyqt
+    - pyside2
+    - qtpy
