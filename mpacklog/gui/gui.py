@@ -14,15 +14,17 @@ import asyncio
 import os
 import sys
 
-from plot_callback import PlotCallback
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
+
+from plot_callback import PlotCallback
 from sized_tree_widget import SizedTreeWidget
 from stream_client import StreamClient
 
 os.environ["QT_API"] = "pyside2"
 
 import asyncqt  # noqa: E402
+
 from plot_widget import PlotWidget  # noqa: E402
 
 
@@ -98,9 +100,9 @@ class MpacklogMainWindow:
         self.ui.show()
 
     def handle_startup(self):
+        data = self.stream_client.read()
         self.ui.telemetryTreeWidget.clear()
         self.tree.clear()
-        data = self.stream_client.read()
         self.update_tree(self.ui.telemetryTreeWidget, data, self.tree)
         asyncio.create_task(self.run())
 
@@ -108,7 +110,11 @@ class MpacklogMainWindow:
         """Main loop of the application."""
         while True:
             data = self.stream_client.read()
-            self.update_data(data, self.tree)
+            try:
+                self.update_data(data, self.tree)
+            except KeyError:  # tree structure has changed
+                self.update_tree(self.ui.telemetryTreeWidget, data, self.tree)
+                self.update_data(data, self.tree)
             await asyncio.sleep(0.01)
 
     def update_tree(self, item, data, tree: dict):
