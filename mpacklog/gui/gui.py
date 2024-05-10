@@ -14,6 +14,7 @@ import asyncio
 import os
 import sys
 
+from plot_callback import PlotCallback
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
 from sized_tree_widget import SizedTreeWidget
@@ -27,41 +28,6 @@ from plot_widget import PlotWidget  # noqa: E402
 
 def format_value(value) -> str:
     return f"{value:.2g}" if isinstance(value, float) else str(value)
-
-
-class PlotCallback(object):
-    def __init__(self):
-        self._index = 0
-        self._callbacks = {}
-
-    def connect(self, handler):
-        result = self._index
-        self._index += 1
-        self._callbacks[result] = handler
-
-        class Connection(object):
-            def __init__(self, parent, index):
-                self.parent = parent
-                self.index = index
-
-            def remove(self):
-                del self.parent._callbacks[self.index]
-
-        return Connection(self, result)
-
-    def update(self, value) -> bool:
-        """Append a new value to plot data.
-
-        Args:
-            value: New value.
-
-        Returns:
-            True if the update was successful, False if the callback is
-            disconnected.
-        """
-        for handler in self._callbacks.values():
-            handler(value)
-        return len(self._callbacks) != 0
 
 
 class MpacklogMainWindow:
