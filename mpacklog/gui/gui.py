@@ -24,10 +24,6 @@ os.environ["QT_API"] = "pyside2"
 import asyncqt  # noqa: E402
 from plot_widget import PlotWidget  # noqa: E402
 
-DEFAULT_RATE = 100
-FORMAT_ROLE = QtCore.Qt.UserRole + 1
-MAX_HISTORY_SIZE = 100
-
 
 def format_value(value) -> str:
     return f"{value:.2g}" if isinstance(value, float) else str(value)
@@ -70,7 +66,6 @@ class MpacklogMainWindow:
 
     def __init__(self, host: str, port: int, parent=None):
         stream_client = StreamClient(host, port)
-        self.default_rate = 100
         self.user_task = None
 
         current_script_dir = os.path.dirname(os.path.abspath(__file__))
