@@ -28,8 +28,6 @@ class PlotWidget(QtWidgets.QWidget):
         history_s: History duration, in seconds.
     """
 
-    COLORS = "rbgcmyk"
-
     history_s: float
 
     def __init__(self, *args, **kwargs):

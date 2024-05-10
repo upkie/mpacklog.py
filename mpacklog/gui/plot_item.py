@@ -14,6 +14,8 @@ import time
 
 import matplotlib
 
+COLORS = "rbgcmyk"
+
 
 class PlotItem(object):
     def __init__(self, axis, plot_widget, name, signal):
@@ -28,14 +30,12 @@ class PlotItem(object):
     def _make_line(self):
         line = matplotlib.lines.Line2D([], [])
         line.set_label(self.name)
-        line.set_color(self.plot_widget.COLORS[self.plot_widget.next_color])
+        line.set_color(COLORS[self.plot_widget.next_color])
         self.plot_widget.next_color = (self.plot_widget.next_color + 1) % len(
-            self.plot_widget.COLORS
+            COLORS
         )
-
         self.axis.add_line(line)
         self.axis.legend(loc=self.axis.legend_loc)
-
         self.line = line
 
     def remove(self):
