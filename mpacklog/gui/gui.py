@@ -119,19 +119,20 @@ class MpacklogMainWindow:
 
     def update_tree(self, item, data, tree: dict):
         tree["__item__"] = item
-        if isinstance(data, dict):
-            for key in sorted(data.keys()):
+        is_dict = isinstance(data, dict)
+        is_list = isinstance(data, list)
+        if not is_dict and not is_list:
+            return
+        keys = sorted(data.keys()) if is_dict else map(str, range(len(data)))
+        for index, key in enumerate(keys):
+            if key not in tree:
                 child = QtWidgets.QTreeWidgetItem(item)
                 child.setText(0, key)
                 tree[key] = {}
-                self.update_tree(child, data[key], tree[key])
-        elif isinstance(data, list):
-            for index, value in enumerate(data):
-                key = str(index)
-                child = QtWidgets.QTreeWidgetItem(item)
-                child.setText(0, key)
-                tree[key] = {}
-                self.update_tree(child, value, tree[key])
+            else:  # item is already in the tree
+                child = tree[key]["__item__"]
+            value = data[key] if is_dict else data[index]
+            self.update_tree(child, value, tree[key])
 
     def update_data(self, data, tree):
         item = tree["__item__"]
@@ -139,8 +140,8 @@ class MpacklogMainWindow:
             for key, value in data.items():
                 self.update_data(value, tree[key])
         elif isinstance(data, list):
-            for key, value in enumerate(data):
-                self.update_data(value, tree[str(key)])
+            for index, value in enumerate(data):
+                self.update_data(value, tree[str(index)])
         else:  # data is not a dictionary
             item.setText(1, format_value(data))
             if "__plot__" in tree:
