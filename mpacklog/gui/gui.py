@@ -29,6 +29,10 @@ FORMAT_ROLE = QtCore.Qt.UserRole + 1
 MAX_HISTORY_SIZE = 100
 
 
+def format_value(value) -> str:
+    return f"{value:.2g}" if isinstance(value, float) else str(value)
+
+
 class RecordSignal(object):
     def __init__(self):
         self._index = 0
@@ -144,7 +148,7 @@ class MpacklogMainWindow:
             for key, value in data.items():
                 self.update_data(value, tree[key])
         else:  # data is not a dictionary
-            item.setText(1, str(data))
+            item.setText(1, format_value(data))
             if "__record__" in tree:
                 tree["__record__"].update(data)
 
