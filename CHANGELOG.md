@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- GUI: Adapt interface from [tview](https://pypi.org/project/moteus-gui/)
+- GUI: Stream client class
+
 ### Changed
 
 - CICD: Update ruff to 0.4.3
