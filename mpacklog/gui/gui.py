@@ -132,11 +132,11 @@ class MpacklogMainWindow:
     def update_tree(self, item, data, tree: dict):
         tree["__item__"] = item
         if isinstance(data, dict):
-            for key, value in data.items():
+            for key in sorted(data.keys()):
                 child = QtWidgets.QTreeWidgetItem(item)
                 child.setText(0, key)
                 tree[key] = {}
-                self.update_tree(child, value, tree[key])
+                self.update_tree(child, data[key], tree[key])
 
     def update_data(self, data, tree):
         item = tree["__item__"]
