@@ -14,8 +14,6 @@ import asyncio
 import os
 import sys
 
-import moteus.reader as reader
-import numpy
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
 from sized_tree_widget import SizedTreeWidget
@@ -29,66 +27,6 @@ from plot_widget import PlotWidget  # noqa: E402
 DEFAULT_RATE = 100
 FORMAT_ROLE = QtCore.Qt.UserRole + 1
 MAX_HISTORY_SIZE = 100
-
-
-def _get_data(value, name):
-    fields = name.split(".")
-    for field in fields:
-        if isinstance(value, list):
-            value = value[int(field)]
-        else:
-            value = getattr(value, field)
-    return value
-
-
-def _add_schema_item(parent, element, terminal_flags=None):
-    # Cache our schema, so that we can use it for things like
-    # generating better input options.
-    parent.setData(1, QtCore.Qt.UserRole, element)
-
-    if isinstance(element, reader.ObjectType):
-        for field in element.fields:
-            name = field.name
-
-            item = QtWidgets.QTreeWidgetItem(parent)
-            item.setText(0, name)
-
-            _add_schema_item(
-                item, field.type_class, terminal_flags=terminal_flags
-            )
-    else:
-        if terminal_flags:
-            parent.setFlags(terminal_flags)
-
-
-def _set_tree_widget_data(item, struct, element, terminal_flags=None):
-    if (
-        isinstance(element, reader.ObjectType)
-        or isinstance(element, reader.ArrayType)
-        or isinstance(element, reader.FixedArrayType)
-    ):
-        if not isinstance(element, reader.ObjectType):
-            for i in range(item.childCount(), len(struct)):
-                subitem = QtWidgets.QTreeWidgetItem(item)
-                subitem.setText(0, str(i))
-                _add_schema_item(
-                    subitem, element.type_class, terminal_flags=terminal_flags
-                )
-        for i in range(item.childCount()):
-            child = item.child(i)
-            if isinstance(struct, list):
-                field = struct[i]
-                child_element = element.type_class
-            else:
-                name = child.text(0)
-                field = getattr(struct, name)
-                child_element = element.fields[i].type_class
-            _set_tree_widget_data(
-                child, field, child_element, terminal_flags=terminal_flags
-            )
-    else:
-        text = repr(struct)
-        item.setText(1, text)
 
 
 class RecordSignal(object):
@@ -117,45 +55,6 @@ class RecordSignal(object):
         return len(self._callbacks) != 0
 
 
-class Record:
-    def __init__(self, archive):
-        self.archive = archive
-        self.signals = {}
-        self.history = []
-
-    def get_signal(self, name):
-        if name not in self.signals:
-            self.signals[name] = RecordSignal()
-        return self.signals[name]
-
-    def update(self, struct):
-        count = 0
-        self.history.append(struct)
-        if len(self.history) > MAX_HISTORY_SIZE:
-            self.history = self.history[1:]
-
-        for key, signal in self.signals.items():
-            if key.startswith("__STDDEV_"):
-                remaining = key.split("__STDDEV_")[1]
-                values = [_get_data(x, remaining) for x in self.history]
-                value = numpy.std(values)
-            elif key.startswith("__MEAN_"):
-                remaining = key.split("__MEAN_")[1]
-                values = [_get_data(x, remaining) for x in self.history]
-                value = numpy.mean(values)
-            else:
-                value = _get_data(struct, key)
-            if signal.update(value):
-                count += 1
-        return count != 0
-
-
-def _get_item_root(item):
-    while item.parent().parent():
-        item = item.parent()
-    return item.text(0)
-
-
 class MpacklogMainWindow:
     """Main application window.
 
@@ -182,20 +81,20 @@ class MpacklogMainWindow:
         self.ui.telemetryTreeWidget = SizedTreeWidget()
         self.ui.telemetryDock.setWidget(self.ui.telemetryTreeWidget)
         self.ui.telemetryTreeWidget.itemExpanded.connect(
-            self._handle_tree_expanded
+            self.handle_tree_expanded
         )
         self.ui.telemetryTreeWidget.itemCollapsed.connect(
-            self._handle_tree_collapsed
+            self.handle_tree_collapsed
         )
         self.ui.telemetryTreeWidget.setContextMenuPolicy(
             QtCore.Qt.CustomContextMenu
         )
         self.ui.telemetryTreeWidget.customContextMenuRequested.connect(
-            self._handle_telemetry_context_menu
+            self.handle_telemetry_context_menu
         )
 
         self.ui.plotItemRemoveButton.clicked.connect(
-            self._handle_plot_item_remove
+            self.handle_plot_item_remove
         )
 
         layout = QtWidgets.QVBoxLayout(self.ui.plotHolderWidget)
@@ -210,34 +109,34 @@ class MpacklogMainWindow:
 
         self.ui.historySpin.valueChanged.connect(update_plot_widget)
 
-        QtCore.QTimer.singleShot(0, self._handle_startup)
+        QtCore.QTimer.singleShot(0, self.handle_startup)
         self.stream_client = stream_client
         self.tree = {}
 
     def show(self):
         self.ui.show()
 
-    def _handle_startup(self):
+    def handle_startup(self):
         self.ui.telemetryTreeWidget.clear()
+        self.tree.clear()
         data = self.stream_client.read()
-        self.tree = {}
-        self.update_telemetry(self.ui.telemetryTreeWidget, data, self.tree)
-        asyncio.create_task(self._run())
+        self.update_tree(self.ui.telemetryTreeWidget, data, self.tree)
+        asyncio.create_task(self.run())
 
-    def update_telemetry(self, item, data, tree: dict):
+    async def run(self):
+        while True:
+            data = self.stream_client.read()
+            self.update_data(data, self.tree)
+            await asyncio.sleep(0.01)
+
+    def update_tree(self, item, data, tree: dict):
         tree["__item__"] = item
         if isinstance(data, dict):
             for key, value in data.items():
                 child = QtWidgets.QTreeWidgetItem(item)
                 child.setText(0, key)
                 tree[key] = {}
-                self.update_telemetry(child, value, tree[key])
-
-    async def _run(self):
-        while True:
-            data = self.stream_client.read()
-            self.update_data(data, self.tree)
-            await asyncio.sleep(0.01)
+                self.update_tree(child, value, tree[key])
 
     def update_data(self, data, tree):
         item = tree["__item__"]
@@ -249,39 +148,32 @@ class MpacklogMainWindow:
             if "__record__" in tree:
                 tree["__record__"].update(data)
 
-    def _handle_tree_expanded(self, item):
+    def handle_tree_expanded(self, item):
         self.ui.telemetryTreeWidget.resizeColumnToContents(0)
         user_data = item.data(0, QtCore.Qt.UserRole)
         if user_data:
             user_data.expand()
 
-    def _handle_tree_collapsed(self, item):
+    def handle_tree_collapsed(self, item):
         user_data = item.data(0, QtCore.Qt.UserRole)
         if user_data:
             user_data.collapse()
 
-    def _handle_telemetry_context_menu(self, pos):
+    def handle_telemetry_context_menu(self, pos):
         item = self.ui.telemetryTreeWidget.itemAt(pos)
         if item.childCount() > 0:
             return
 
         menu = QtWidgets.QMenu(self.ui)
-        left_action = menu.addAction("Plot Left")
-        right_action = menu.addAction("Plot Right")
-
-        plot_actions = [
-            left_action,
-            right_action,
-        ]
-
-        right_actions = [right_action]
+        plot_left_action = menu.addAction("Plot Left")
+        plot_right_action = menu.addAction("Plot Right")
+        plot_actions = [plot_left_action, plot_right_action]
 
         menu.addSeparator()
-        copy_name = menu.addAction("Copy Name")
-        copy_value = menu.addAction("Copy Value")
+        copy_name_action = menu.addAction("Copy Name")
+        copy_value_action = menu.addAction("Copy Value")
 
         requested = menu.exec_(self.ui.telemetryTreeWidget.mapToGlobal(pos))
-
         if requested in plot_actions:
             top = item
             keys = []
@@ -290,23 +182,22 @@ class MpacklogMainWindow:
                 top = top.parent()
             keys.reverse()
             name = ".".join(keys)
-            print(f"{name=}")
             node = self.tree
             for key in keys:
                 node = node[key]
             record_signal = RecordSignal()
             node["__record__"] = record_signal
-            axis = 1 if requested in right_actions else 0
+            axis = 1 if requested == plot_right_action else 0
             plot_item = self.ui.plotWidget.add_plot(name, record_signal, axis)
             self.ui.plotItemCombo.addItem(name, plot_item)
-        elif requested == copy_name:
+        elif requested == copy_name_action:
             QtWidgets.QApplication.clipboard().setText(item.text(0))
-        elif requested == copy_value:
+        elif requested == copy_value_action:
             QtWidgets.QApplication.clipboard().setText(item.text(1))
         else:  # the user cancelled
             pass
 
-    def _handle_plot_item_remove(self):
+    def handle_plot_item_remove(self):
         index = self.ui.plotItemCombo.currentIndex()
         if index < 0:
             return
