@@ -21,6 +21,7 @@ import moteus.reader as reader
 import numpy
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
+from stream_client import StreamClient
 
 os.environ["QT_API"] = "pyside2"
 
@@ -414,11 +415,17 @@ def _get_item_root(item):
 
 
 class MpacklogMainWindow:
-    def __init__(self, parent=None):
-        self.port = None
-        self.devices = []
-        self.default_rate = 100
+    """Main application window.
 
+    Attributes:
+        stream_client: Client to read streaming data from.
+    """
+
+    stream_client: StreamClient
+
+    def __init__(self, host: str, port: int, parent=None):
+        stream_client = StreamClient(host, port)
+        self.default_rate = 100
         self.user_task = None
 
         current_script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -432,7 +439,6 @@ class MpacklogMainWindow:
 
         self.ui.telemetryTreeWidget = SizedTreeWidget()
         self.ui.telemetryDock.setWidget(self.ui.telemetryTreeWidget)
-
         self.ui.telemetryTreeWidget.itemExpanded.connect(
             self._handle_tree_expanded
         )
@@ -465,14 +471,13 @@ class MpacklogMainWindow:
         self.ui.historySpin.valueChanged.connect(update_plotwidget)
 
         QtCore.QTimer.singleShot(0, self._handle_startup)
+        self.stream_client = stream_client
 
     def show(self):
         self.ui.show()
 
     def _handle_startup(self):
         asyncio.create_task(self._run_transport())
-
-        self.devices = []
         self.ui.telemetryTreeWidget.clear()
 
     async def _run_transport(self):
@@ -487,74 +492,7 @@ class MpacklogMainWindow:
 
     async def _run_transport_iteration(self):
         any_data_read = False
-
-        # First, do writes from all devices.  This ensures that the
-        # writes will go out at approximately the same time.
-        for device in self.devices:
-            await device.emit_any_writes()
-
-        # Then poll for new data.  Back off from unresponsive devices
-        # so that they don't disrupt everything.
-        for device in self.devices:
-            if device.poll_count:
-                device.poll_count -= 1
-                continue
-
-            await device.poll()
-
-            try:
-                this_data_read = await asyncio.wait_for(
-                    self._dispatch_until(
-                        lambda x: (x.arbitration_id >> 8) & 0xFF
-                        == device.number
-                    ),
-                    timeout=POLL_TIMEOUT_S,
-                )
-
-                device.error_count = 0
-                device.poll_count = 0
-
-                if this_data_read:
-                    any_data_read = True
-            except asyncio.TimeoutError:
-                # Mark this device as error-full, which will then
-                # result in backoff in polling.
-                device.error_count = min(1000, device.error_count + 1)
-                device.poll_count = device.error_count
-
         return any_data_read
-
-    def make_writer(self, devices, line):
-        def write():
-            for device in devices:
-                device.write((line + "\n").encode("latin1"))
-
-        return write
-
-    async def _wait_user_query(self, maybe_id):
-        device_nums = [self.devices[0].number]
-        if maybe_id:
-            device_nums = [int(maybe_id)]
-
-        devices = [x for x in self.devices if x.number in device_nums]
-
-        record = "servo_stats"
-
-        if len(devices) == 0:
-            # Nothing to wait on, so return immediately
-            return
-
-        for d in devices:
-            await d.ensure_record_active(record)
-            await d.wait_for_data(record)
-            await d.wait_for_data(record)
-
-        while True:
-            # Now look for at least to have trajectory_done == True
-            for d in devices:
-                servo_stats = await d.wait_for_data(record)
-                if getattr(servo_stats, "trajectory_done", False):
-                    return
 
     def _handle_tree_expanded(self, item):
         self.ui.telemetryTreeWidget.resizeColumnToContents(0)
@@ -638,16 +576,13 @@ class MpacklogMainWindow:
             item.setData(1, FORMAT_ROLE, FMT_STANDARD)
         elif requested == fmt_hex_action:
             item.setData(1, FORMAT_ROLE, FMT_HEX)
-        else:
-            # The user cancelled.
+        else:  # the user cancelled
             pass
 
     def _handle_plot_item_remove(self):
         index = self.ui.plotItemCombo.currentIndex()
-
         if index < 0:
             return
-
         item = self.ui.plotItemCombo.itemData(index)
         self.ui.plotWidget.remove_plot(item)
         self.ui.plotItemCombo.removeItem(index)
@@ -661,7 +596,7 @@ def main():
     # To work around https://bugreports.qt.io/browse/PYSIDE-88
     app.aboutToQuit.connect(lambda: os._exit(0))
 
-    window = MpacklogMainWindow()
+    window = MpacklogMainWindow("localhost", 4747)
     window.show()
     app.exec_()
 
