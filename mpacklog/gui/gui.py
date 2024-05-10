@@ -10,19 +10,13 @@
 
 """Interactively display and update values from an embedded device."""
 
-import argparse
 import asyncio
-import io
 import os
-import re
-import struct
 import sys
 import time
 
 import matplotlib
 import matplotlib.figure
-import moteus
-import moteus.moteus_tool
 import moteus.reader as reader
 import numpy
 from PySide2 import QtUiTools
@@ -419,460 +413,8 @@ def _get_item_root(item):
     return item.text(0)
 
 
-class DeviceStream:
-    def __init__(self, transport, controller):
-        self._write_data = b""
-        self._read_data = b""
-        self.transport = transport
-        self.controller = controller
-
-        self._read_condition = asyncio.Condition()
-
-        self.emit_count = 0
-        self.poll_count = 0
-
-    def ignore_all(self):
-        self._read_data = b""
-
-    def write(self, data):
-        self._write_data += data
-
-    async def poll(self):
-        self.poll_count += 1
-        await self.transport.write(self.controller.make_diagnostic_read())
-
-    async def maybe_emit_one(self):
-        if len(self._write_data) == 0:
-            return
-
-        self.emit_count += 1
-
-        to_write, self._write_data = (
-            self._write_data[0:MAX_SEND],
-            self._write_data[MAX_SEND:],
-        )
-        await self.transport.write(
-            self.controller.make_diagnostic_write(to_write)
-        )
-
-    async def process_message(self, message):
-        data = message.data
-
-        if len(data) < 3:
-            return False
-
-        if data[0] != 0x41:
-            return False
-        if data[1] != 1:
-            return False
-        if data[2] > MAX_SEND:
-            return False
-        datalen = data[2]
-        if datalen > (len(data) - 3):
-            return False
-
-        self._read_data += data[3 : 3 + datalen]
-
-        async with self._read_condition:
-            self._read_condition.notify_all()
-
-        return datalen > 0
-
-    def _read_maybe_empty_line(self):
-        first_newline = min(
-            (self._read_data.find(c) for c in b"\r\n" if c in self._read_data),
-            default=None,
-        )
-        if first_newline is None:
-            return
-        to_return, self._read_data = (
-            self._read_data[0 : first_newline + 1],
-            self._read_data[first_newline + 1 :],
-        )
-        return to_return
-
-    async def readline(self):
-        while True:
-            maybe_line = self._read_maybe_empty_line()
-            if maybe_line:
-                maybe_line = maybe_line.rstrip()
-                if len(maybe_line) > 0:
-                    return maybe_line
-            async with self._read_condition:
-                await self._read_condition.wait()
-
-    async def resynchronize(self):
-        while True:
-            oldlen = len(self._read_data)
-            async with self._read_condition:
-                await self._read_condition.wait()
-            newlen = len(self._read_data)
-            if newlen == oldlen:
-                self._read_data = b""
-                return
-
-    async def read_sized_block(self):
-        while True:
-            if len(self._read_data) >= 5:
-                size = struct.unpack("<I", self._read_data[1:5])[0]
-                if size > 2**24:
-                    return False
-
-                if len(self._read_data) >= (5 + size):
-                    block = self._read_data[5 : 5 + size]
-                    self._read_data = self._read_data[5 + size :]
-                    return block
-
-            async with self._read_condition:
-                await self._read_condition.wait()
-
-
-class Device:
-    STATE_LINE = 0
-    STATE_CONFIG = 1
-    STATE_TELEMETRY = 2
-    STATE_SCHEMA = 3
-    STATE_DATA = 4
-
-    def __init__(
-        self,
-        number,
-        transport,
-        console,
-        prefix,
-        config_tree_item,
-        data_tree_item,
-        can_prefix=None,
-    ):
-        self.error_count = 0
-        self.poll_count = 0
-
-        self.number = number
-        self.controller = moteus.Controller(number, can_prefix=can_prefix)
-        self._transport = transport
-        self._stream = DeviceStream(transport, self.controller)
-
-        self._console = console
-        self._prefix = prefix
-        self._config_tree_item = config_tree_item
-        self._data_tree_item = data_tree_item
-
-        self._telemetry_records = {}
-        self._schema_name = None
-        self._config_tree_items = {}
-        self._config_callback = None
-
-        self._events = {}
-        self._data_update_time = {}
-        self._data = {}
-
-        self._updating_config = False
-
-    async def start(self):
-        # Stop the spew.
-        self.write("\r\ntel stop\r\n".encode("latin1"))
-
-        # Make sure we've actually had a chance to write and poll.
-        while self._stream.poll_count < 5 or self._stream.emit_count < 1:
-            await asyncio.sleep(0.2)
-
-        self._stream.ignore_all()
-
-        await self.update_config()
-        await self.update_telemetry()
-
-        await self.run()
-
-    async def update_config(self):
-        self._updating_config = True
-
-        try:
-            # Clear out our config tree.
-            self._config_tree_item.takeChildren()
-            self._config_tree_items = {}
-
-            # Try doing it the "new" way first.
-            try:
-                await self.schema_update_config()
-                self._schema_config = True
-                return
-            except CommandError:
-                # This means the controller we're working with doesn't
-                # support the schema based config.
-                self._schema_config = False
-                pass
-
-            configs = await self.command("conf enumerate")
-            for config in configs.split("\n"):
-                if config.strip() == "":
-                    continue
-                self.add_config_line(config)
-        finally:
-            self._updating_config = False
-
-    async def schema_update_config(self):
-        elements = [
-            x.strip()
-            for x in (await self.command("conf list")).split("\n")
-            if x.strip() != ""
-        ]
-        for element in elements:
-            self.write_line(f"conf schema {element}\r\n")
-            schema = await self.read_schema(element)
-            self.write_line(f"conf data {element}\r\n")
-            data = await self.read_data(element)
-
-            archive = reader.Type.from_binary(io.BytesIO(schema), name=element)
-            item = QtWidgets.QTreeWidgetItem(self._config_tree_item)
-            item.setText(0, element)
-
-            flags = (
-                QtCore.Qt.ItemIsEditable
-                | QtCore.Qt.ItemIsSelectable
-                | QtCore.Qt.ItemIsEnabled
-            )
-
-            _add_schema_item(item, archive, terminal_flags=flags)
-            self._config_tree_items[element] = item
-            struct = archive.read(reader.Stream(io.BytesIO(data)))
-            _set_tree_widget_data(item, struct, archive, terminal_flags=flags)
-
-    async def update_telemetry(self):
-        self._data_tree_item.takeChildren()
-        self._telemetry_records = {}
-
-        channels = await self.command("tel list")
-        for name in channels.split("\n"):
-            if name.strip() == "":
-                continue
-
-            self.write_line(f"tel schema {name}\r\n")
-            schema = await self.read_schema(name)
-
-            archive = reader.Type.from_binary(io.BytesIO(schema), name=name)
-
-            record = Record(archive)
-            self._telemetry_records[name] = record
-            record.tree_item = self._add_schema_to_tree(name, archive, record)
-
-            self._add_text("<schema name=%s>\n" % name)
-
-    async def run(self):
-        while True:
-            line = await self.readline()
-            if _has_nonascii(line):
-                # We need to try and resynchronize.  Skip to a '\r\n'
-                # followed by at least 3 ASCII characters.
-                await self._stream.resynchronize()
-            if line.startswith("emit "):
-                try:
-                    await self.do_data(line.split(" ")[1])
-                except Exception as e:
-                    if (
-                        hasattr(self._stream.transport, "_debug_log")
-                        and self._stream.transport._debug_log
-                    ):
-                        self._stream.transport._debug_log.write(
-                            f"Error reading data: {e}".encode("latin1")
-                        )
-                    print("Error reading data:", str(e))
-                    # Just keep going and try to read more.
-
-    async def read_schema(self, name):
-        while True:
-            line = await self.readline()
-            if line.startswith("ERR"):
-                raise CommandError("", line)
-            if not (line == f"schema {name}" or line == f"schema {name}"):
-                continue
-            break
-        schema = await self.read_sized_block()
-        return schema
-
-    async def read_data(self, name):
-        while True:
-            line = await self.readline()
-            if not line == f"cdata {name}":
-                continue
-            if line.startswith("ERR"):
-                raise CommandError("", line)
-            break
-        return await self.read_sized_block()
-
-    async def do_data(self, name):
-        data = await self.read_sized_block()
-        if not data:
-            return
-
-        if name not in self._telemetry_records:
-            return
-
-        record = self._telemetry_records[name]
-        if record:
-            struct = record.archive.read(reader.Stream(io.BytesIO(data)))
-            record.update(struct)
-            _set_tree_widget_data(record.tree_item, struct, record.archive)
-
-            self._data[name] = struct
-            if name not in self._events:
-                self._events[name] = asyncio.Event()
-            self._events[name].set()
-            self._data_update_time[name] = time.time()
-
-    async def wait_for_data(self, name):
-        if name not in self._events:
-            self._events[name] = asyncio.Event()
-
-        await self._events[name].wait()
-        self._events[name].clear()
-        return self._data[name]
-
-    async def ensure_record_active(self, name):
-        now = time.time()
-        if (now - self._data_update_time.get(name, 0.0)) > 0.2:
-            print(f"trying to enable {name}")
-            self.write_line(f"tel rate {name} 100\r\n")
-
-    async def read_sized_block(self):
-        return await self._stream.read_sized_block()
-
-    async def process_message(self, message):
-        any_data_read = await self._stream.process_message(message)
-
-        return any_data_read
-
-    async def emit_any_writes(self):
-        await self._stream.maybe_emit_one()
-
-    async def poll(self):
-        await self._stream.poll()
-
-    def write(self, data):
-        self._stream.write(data)
-
-    def config_item_changed(self, name, value, schema):
-        if self._updating_config:
-            return
-        if isinstance(schema, reader.EnumType) and ":" in value:
-            int_val = value.rsplit(":", 1)[-1].strip(" >")
-            value = int_val
-        if isinstance(schema, reader.BooleanType) and value.lower() in [
-            "true",
-            "false",
-        ]:
-            value = 1 if (value.lower() == "true") else 0
-        self.write_line("conf set %s %s\r\n" % (name, value))
-
-    async def readline(self):
-        result = (await self._stream.readline()).decode("latin1")
-        if not result.startswith("emit "):
-            self._add_text(result + "\n")
-        return result
-
-    async def command(self, message):
-        self.write_line(message + "\r\n")
-        result = io.StringIO()
-
-        # First, read until we get something that is not an 'emit'
-        # line.
-        while True:
-            line = await self.readline()
-            if line.startswith("emit ") or line.startswith("schema "):
-                continue
-            break
-
-        while True:
-            if line.startswith("ERR"):
-                raise CommandError(message, line)
-            if line.startswith("OK"):
-                return result.getvalue()
-
-            result.write(line + "\n")
-            line = await self.readline()
-
-    def add_config_line(self, line):
-        # Add it into our tree view.
-        key, value = line.split(" ", 1)
-        name, rest = key.split(".", 1)
-        if name not in self._config_tree_items:
-            item = QtWidgets.QTreeWidgetItem(self._config_tree_item)
-            item.setText(0, name)
-            self._config_tree_items[name] = item
-
-        def add_config(item, key, value):
-            if key == "":
-                item.setText(1, value)
-                item.setFlags(
-                    QtCore.Qt.ItemFlags(
-                        QtCore.Qt.ItemIsEditable
-                        | QtCore.Qt.ItemIsSelectable
-                        | QtCore.Qt.ItemIsEnabled
-                    )
-                )
-                return
-
-            fields = key.split(".", 1)
-            this_field = fields[0]
-            next_key = ""
-            if len(fields) > 1:
-                next_key = fields[1]
-
-            child = None
-            # See if we already have an appropriate child.
-            for i in range(item.childCount()):
-                if item.child(i).text(0) == this_field:
-                    child = item.child(i)
-                    break
-            if child is None:
-                child = QtWidgets.QTreeWidgetItem(item)
-                child.setText(0, this_field)
-            add_config(child, next_key, value)
-
-        add_config(self._config_tree_items[name], rest, value)
-
-    def _add_text(self, line):
-        self._console.add_text(self._prefix + line)
-        if (
-            hasattr(self._stream.transport, "_debug_log")
-            and self._stream.transport._debug_log
-        ):
-            self._stream.transport._debug_log.write(
-                f"{time.time()} : {line}".encode("latin1")
-            )
-
-    def write_line(self, line):
-        self._add_text(line)
-        self.write(line.encode("latin1"))
-
-    class Schema:
-        def __init__(self, name, parent, record):
-            self._name = name
-            self._parent = parent
-            self.record = record
-
-        def expand(self):
-            self._parent.write_line("tel fmt %s 0\r\n" % self._name)
-            self._parent.write_line(
-                "tel rate %s %d\r\n" % (self._name, DEFAULT_RATE)
-            )
-
-        def collapse(self):
-            self._parent.write_line("tel rate %s 0\r\n" % self._name)
-
-    def _add_schema_to_tree(self, name, schema_data, record):
-        item = QtWidgets.QTreeWidgetItem(self._data_tree_item)
-        item.setText(0, name)
-
-        schema = Device.Schema(name, self, record)
-        item.setData(0, QtCore.Qt.UserRole, schema)
-
-        _add_schema_item(item, schema_data)
-        return item
-
-
 class MpacklogMainWindow:
-    def __init__(self, options, parent=None):
-        self.options = options
+    def __init__(self, parent=None):
         self.port = None
         self.devices = []
         self.default_rate = 100
@@ -887,9 +429,6 @@ class MpacklogMainWindow:
         uifile.open(QtCore.QFile.ReadOnly)
         self.ui = loader.load(uifile, parent)
         uifile.close()
-
-        self.ui.configTreeWidget = SizedTreeWidget()
-        self.ui.configDock.setWidget(self.ui.configTreeWidget)
 
         self.ui.telemetryTreeWidget = SizedTreeWidget()
         self.ui.telemetryDock.setWidget(self.ui.telemetryTreeWidget)
@@ -907,25 +446,11 @@ class MpacklogMainWindow:
             self._handle_telemetry_context_menu
         )
 
-        self.ui.configTreeWidget.setItemDelegateForColumn(
-            0, NoEditDelegate(self.ui)
-        )
-        self.ui.configTreeWidget.setItemDelegateForColumn(
-            1, EditDelegate(self.ui)
-        )
-
-        self.ui.configTreeWidget.itemExpanded.connect(
-            self._handle_config_expanded
-        )
-        self.ui.configTreeWidget.itemChanged.connect(
-            self._handle_config_item_changed
-        )
-
         self.ui.plotItemRemoveButton.clicked.connect(
             self._handle_plot_item_remove
         )
 
-        self.ui.tabifyDockWidget(self.ui.configDock, self.ui.telemetryDock)
+        # self.ui.tabifyDockWidget(self.ui.telemetryDock)
 
         layout = QtWidgets.QVBoxLayout(self.ui.plotHolderWidget)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -944,60 +469,11 @@ class MpacklogMainWindow:
     def show(self):
         self.ui.show()
 
-    def _make_transport(self):
-        # Get a transport as configured.
-        return moteus.get_singleton_transport(self.options)
-
-    def _open(self):
-        self.transport = self._make_transport()
+    def _handle_startup(self):
         asyncio.create_task(self._run_transport())
 
         self.devices = []
-        self.ui.configTreeWidget.clear()
         self.ui.telemetryTreeWidget.clear()
-
-        for device_id in moteus.moteus_tool.expand_targets(
-            self.options.devices or ["1"]
-        ):
-            config_item = QtWidgets.QTreeWidgetItem()
-            config_item.setText(0, str(device_id))
-            self.ui.configTreeWidget.addTopLevelItem(config_item)
-
-            data_item = QtWidgets.QTreeWidgetItem()
-            data_item.setText(0, str(device_id))
-            self.ui.telemetryTreeWidget.addTopLevelItem(data_item)
-
-            device = Device(
-                device_id,
-                self.transport,
-                None,
-                "{}>".format(device_id),
-                config_item,
-                data_item,
-                self.options.can_prefix,
-            )
-
-            config_item.setData(0, QtCore.Qt.UserRole, device)
-            asyncio.create_task(device.start())
-
-            self.devices.append(device)
-
-    def _handle_startup(self):
-        self._open()
-
-    async def _dispatch_until(self, predicate):
-        while True:
-            message = await self.transport.read()
-            if message is None:
-                continue
-            source_id = (message.arbitration_id >> 8) & 0xFF
-            any_data_read = False
-            for device in self.devices:
-                if device.number == source_id:
-                    any_data_read = await device.process_message(message)
-                    break
-            if predicate(message):
-                return any_data_read
 
     async def _run_transport(self):
         any_data_read = False
@@ -1055,23 +531,6 @@ class MpacklogMainWindow:
 
         return write
 
-    def _handle_user_input(self, line):
-        if self.user_task is not None:
-            # We have an outstanding one, so cancel it.
-            self.user_task.cancel()
-            self.user_task = None
-
-        self.user_task = asyncio.create_task(self._run_user_command_line(line))
-
-    async def _run_user_command_line(self, line):
-        try:
-            for command in [x.strip() for x in line.split("&&")]:
-                await self._run_user_command(command)
-        except Exception as e:
-            print("Error:", str(e))
-
-            # Otherwise ignore problems so that tview keeps running.
-
     async def _wait_user_query(self, maybe_id):
         device_nums = [self.devices[0].number]
         if maybe_id:
@@ -1096,29 +555,6 @@ class MpacklogMainWindow:
                 servo_stats = await d.wait_for_data(record)
                 if getattr(servo_stats, "trajectory_done", False):
                     return
-
-    async def _run_user_command(self, command):
-        delay_re = re.search(r"^:(\d+)$", command)
-        device_re = re.search(r"^(A|\d+)>(.*)$", command)
-        traj_re = re.search(r"^(\?(\d+)?)$", command)
-
-        device_nums = [self.devices[0].number]
-
-        if traj_re:
-            await self._wait_user_query(traj_re.group(2))
-            return
-        if delay_re:
-            await asyncio.sleep(int(delay_re.group(2)) / 1000.0)
-            return
-        elif device_re:
-            command = device_re.group(2)
-            if device_re.group(1) == "A":
-                device_nums = [x.number for x in self.devices]
-            else:
-                device_nums = [int(device_re.group(1))]
-
-        for device in [x for x in self.devices if x.number in device_nums]:
-            device.write((command + "\n").encode("latin1"))
 
     def _handle_tree_expanded(self, item):
         self.ui.telemetryTreeWidget.resizeColumnToContents(0)
@@ -1206,24 +642,6 @@ class MpacklogMainWindow:
             # The user cancelled.
             pass
 
-    def _handle_config_expanded(self, item):
-        self.ui.configTreeWidget.resizeColumnToContents(0)
-
-    def _handle_config_item_changed(self, item, column):
-        if not item.parent():
-            return
-
-        top = item
-        while top.parent():
-            top = top.parent()
-
-        device = top.data(0, QtCore.Qt.UserRole)
-        device.config_item_changed(
-            _get_item_name(item),
-            item.text(1),
-            item.data(1, QtCore.Qt.UserRole),
-        )
-
     def _handle_plot_item_remove(self):
         index = self.ui.plotItemCombo.currentIndex()
 
@@ -1236,26 +654,6 @@ class MpacklogMainWindow:
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-
-    # These two commands are aliases.
-    parser.add_argument(
-        "-d",
-        "--devices",
-        "-t",
-        "--target",
-        action="append",
-        type=str,
-        default=[],
-    )
-    parser.add_argument("--can-prefix", type=int, default=0)
-
-    parser.add_argument("--max-receive-bytes", default=48, type=int)
-
-    moteus.make_transport_args(parser)
-
-    args = parser.parse_args()
-
     app = QtWidgets.QApplication(sys.argv)
     loop = asyncqt.QEventLoop(app)
     asyncio.set_event_loop(loop)
@@ -1263,7 +661,7 @@ def main():
     # To work around https://bugreports.qt.io/browse/PYSIDE-88
     app.aboutToQuit.connect(lambda: os._exit(0))
 
-    window = MpacklogMainWindow(args)
+    window = MpacklogMainWindow()
     window.show()
     app.exec_()
 
