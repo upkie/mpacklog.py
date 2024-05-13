@@ -33,6 +33,7 @@ keywords = ["messagepack", "serialization", "logging"]
 
 [project.scripts]
 mpacklog = "mpacklog.cli:main"
+mpacklog_gui = "mpacklog.gui:main"
 
 [project.urls]
 Source = "https://github.com/upkie/mpacklog.py"
