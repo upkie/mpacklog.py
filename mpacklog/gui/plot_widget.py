@@ -15,7 +15,7 @@ import time
 import matplotlib
 import matplotlib.figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg  # noqa: E402
-from plot_item import PlotItem
+from .plot_item import PlotItem
 from qtpy import QtCore, QtWidgets
 
 qt_backend = matplotlib.backends.backend_qt5agg

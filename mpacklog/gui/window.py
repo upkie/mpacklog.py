@@ -11,12 +11,13 @@
 import asyncio
 import os
 
-from plot_callback import PlotCallback
 from PySide2 import QtUiTools
-from plot_widget import PlotWidget
 from qtpy import QtCore, QtWidgets
-from sized_tree_widget import SizedTreeWidget
-from stream_client import StreamClient
+
+from .plot_callback import PlotCallback
+from .plot_widget import PlotWidget
+from .sized_tree_widget import SizedTreeWidget
+from .stream_client import StreamClient
 
 
 def format_value(value) -> str:
