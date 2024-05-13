@@ -14,18 +14,21 @@ import asyncio
 import os
 import sys
 
+from plot_callback import PlotCallback
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
-
-from plot_callback import PlotCallback
 from sized_tree_widget import SizedTreeWidget
 from stream_client import StreamClient
 
 os.environ["QT_API"] = "pyside2"
 
 import asyncqt  # noqa: E402
-
 from plot_widget import PlotWidget  # noqa: E402
+
+# Why this is necessary and not just the default, I don't know, but
+# otherwise we get a warning about "Qt WebEngine seems to be
+# initialized from a plugin..."
+QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 
 
 def format_value(value) -> str:
@@ -45,6 +48,9 @@ class MpacklogMainWindow:
 
     Attributes:
         stream_client: Client to read streaming data from.
+
+    This application derives from the ``tview`` GUI distributed in
+    [moteus-gui](https://pypi.org/project/moteus-gui/).
     """
 
     stream_client: StreamClient
