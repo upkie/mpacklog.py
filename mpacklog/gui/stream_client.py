@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2024 Inria
 
+import asyncio
 import socket
 from typing import Optional
 
@@ -21,6 +22,8 @@ class StreamClient:
         """
         unpacker = msgpack.Unpacker(raw=False)
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setblocking(False)
+        server.settimeout(5.0)
         server.connect((host, port))
         self.server = server
         self.unpacker = unpacker
@@ -30,12 +33,14 @@ class StreamClient:
         if hasattr(self, "server"):
             self.server.close()
 
-    def read(self) -> Optional[dict]:
+    async def read(self) -> Optional[dict]:
         """Read a dictionary from the streaming server."""
-        self.server.send("get".encode("utf-8"))
-        reply_dict = {}
-        while not reply_dict:
-            data = self.server.recv(4096)
+        loop = asyncio.get_event_loop()
+        request = "get".encode("utf-8")
+        await loop.sock_sendall(self.server, request)
+        reply_dict = None
+        while reply_dict is None:
+            data = await loop.sock_recv(self.server, 4096)
             if not data:
                 return None
             self.unpacker.feed(data)
