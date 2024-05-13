@@ -3,3 +3,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2024 Inria
+
+"""GUI to stream MessagePack log files."""
+
+from .main import main
+
+__all__ = [
+    "main",
+]

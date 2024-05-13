@@ -6,7 +6,6 @@
 
 """Manipulate MessagePack log files from the command line."""
 
-
 from .csv_printer import CSVPrinter
 from .field_printer import FieldPrinter
 from .json_printer import JSONPrinter
