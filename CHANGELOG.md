@@ -4,8 +4,7 @@
 
 ### Added
 
-- GUI: Adapt interface from [tview](https://pypi.org/project/moteus-gui/)
-- GUI: Stream client class
+- GUI adapted from ``tview`` in [moteus-gui](https://pypi.org/project/moteus-gui/)
 
 ### Changed
 
