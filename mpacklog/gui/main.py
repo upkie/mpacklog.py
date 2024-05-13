@@ -61,6 +61,10 @@ def parse_command_line_arguments() -> argparse.Namespace:
 
 
 def main(argv=None) -> None:
+    # Avoids the following warning when starting up the app: "Qt: Session
+    # management error: Could not open network socket"
+    del os.environ["SESSION_MANAGER"]
+
     args = parse_command_line_arguments()
     stream_client = StreamClient(args.host, args.port)
     app = QtWidgets.QApplication(sys.argv)
