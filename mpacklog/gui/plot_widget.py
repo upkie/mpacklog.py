@@ -15,25 +15,30 @@ import time
 import matplotlib
 import matplotlib.figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg  # noqa: E402
-from .plot_item import PlotItem
 from qtpy import QtCore, QtWidgets
 
+from .plot_item import PlotItem
+
 qt_backend = matplotlib.backends.backend_qt5agg
+
+# This value is also written in the XML layout file, in the "value" property of
+# the "historySpin" spinbox. The two values should be kept in sync.
+DEFAULT_HISTORY_DURATION: float = 10.0  # seconds
 
 
 class PlotWidget(QtWidgets.QWidget):
     """Plot widget.
 
     Attributes:
-        history_s: History duration, in seconds.
+        history_duration: History duration in seconds.
     """
 
-    history_s: float
+    history_duration: float
 
     def __init__(self, *args, **kwargs):
         QtWidgets.QWidget.__init__(self, *args, **kwargs)
 
-        self.history_s = 20.0
+        self.history_duration = DEFAULT_HISTORY_DURATION
         self.next_color = 0
         self.paused = False
         self.last_draw_time = 0.0
@@ -54,7 +59,7 @@ class PlotWidget(QtWidgets.QWidget):
         self.toolbar = qt_backend.NavigationToolbar2QT(self.canvas, self)
         self.pause_action = QtWidgets.QAction("Pause", self)
         self.pause_action.setCheckable(True)
-        self.pause_action.toggled.connect(self._handle_pause)
+        self.pause_action.toggled.connect(self.handle_pause)
         self.toolbar.addAction(self.pause_action)
 
         layout = QtWidgets.QVBoxLayout(self)
@@ -63,7 +68,7 @@ class PlotWidget(QtWidgets.QWidget):
 
         self.canvas.setFocusPolicy(QtCore.Qt.ClickFocus)
 
-    def _handle_pause(self, value):
+    def handle_pause(self, value):
         self.paused = value
 
     def add_plot(self, name, signal, axis_number):
@@ -86,7 +91,7 @@ class PlotWidget(QtWidgets.QWidget):
             self.last_draw_time = now
             self.canvas.draw()
 
-    def _get_axes_keys(self):
+    def get_axes_keys(self):
         result = []
         result.append(("1", self.left_axis))
         if self.right_axis:
@@ -96,7 +101,7 @@ class PlotWidget(QtWidgets.QWidget):
     def handle_key_press(self, event):
         if event.key not in ["1", "2"]:
             return
-        for key, axis in self._get_axes_keys():
+        for key, axis in self.get_axes_keys():
             if key == event.key:
                 axis.set_navigate(True)
             else:
@@ -105,5 +110,5 @@ class PlotWidget(QtWidgets.QWidget):
     def handle_key_release(self, event):
         if event.key not in ["1", "2"]:
             return
-        for key, axis in self._get_axes_keys():
+        for key, axis in self.get_axes_keys():
             axis.set_navigate(True)
