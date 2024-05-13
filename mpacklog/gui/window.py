@@ -9,6 +9,7 @@
 # (https://github.com/mjbots/moteus, 49c698a63f0ded22528ad7539cc2e27e41cd486d)
 
 import asyncio
+import logging
 import os
 
 from PySide2 import QtUiTools
@@ -43,6 +44,7 @@ class Window:
     """
 
     stream_client: StreamClient
+    tree: dict
 
     def __init__(self, stream_client: StreamClient, parent=None):
 
@@ -94,16 +96,24 @@ class Window:
         self.ui.show()
 
     def handle_startup(self):
-        data = self.stream_client.read()
-        self.ui.telemetryTreeWidget.clear()
-        self.tree.clear()
-        self.update_tree(self.ui.telemetryTreeWidget, data, self.tree)
         asyncio.create_task(self.run())
 
     async def run(self):
         """Main loop of the application."""
+        data = await self.stream_client.read()
+        self.ui.telemetryTreeWidget.clear()
+        self.tree.clear()
+        self.update_tree(self.ui.telemetryTreeWidget, data, self.tree)
         while True:
-            data = self.stream_client.read()
+            try:
+                data = await self.stream_client.read()
+            except ConnectionResetError:
+                data = None
+            if data is None:
+                logging.warning(
+                    "Connection reset by peer, plot is now frozen"
+                )
+                break
             try:
                 self.update_data(data, self.tree)
             except KeyError:  # tree structure has changed
