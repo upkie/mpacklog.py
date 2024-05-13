@@ -25,9 +25,9 @@ class PlotItem(object):
         self.line = None
         self.xdata = []
         self.ydata = []
-        self.connection = signal.connect(self._handle_update)
+        self.connection = signal.connect(self.handle_update)
 
-    def _make_line(self):
+    def make_line(self):
         line = matplotlib.lines.Line2D([], [])
         line.set_label(self.name)
         line.set_color(COLORS[self.plot_widget.next_color])
@@ -51,12 +51,12 @@ class PlotItem(object):
             self.axis.legend(loc=self.axis.legend_loc)
         self.plot_widget.canvas.draw()
 
-    def _handle_update(self, value):
+    def handle_update(self, value):
         if self.plot_widget.paused:
             return
 
         if self.line is None:
-            self._make_line()
+            self.make_line()
 
         now = time.time()
         self.xdata.append(now)
@@ -64,7 +64,7 @@ class PlotItem(object):
 
         # Remove elements from the beginning until there is at most
         # one before the window.
-        oldest_time = now - self.plot_widget.history_s
+        oldest_time = now - self.plot_widget.history_duration
         oldest_index = None
         for i in range(len(self.xdata)):
             if self.xdata[i] >= oldest_time:
@@ -76,8 +76,6 @@ class PlotItem(object):
             self.ydata = self.ydata[oldest_index:]
 
         self.line.set_data(self.xdata, self.ydata)
-
         self.axis.relim()
         self.axis.autoscale()
-
         self.plot_widget.data_update()

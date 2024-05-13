@@ -56,7 +56,8 @@
              <double>5000.000000000000000</double>
             </property>
             <property name="value">
-             <double>20.000000000000000</double>
+             <!-- This value is also written in plot_widget.py, in DEFAULT_HISTORY_DURATION. The two values should be kept in sync. -->
+             <double>10.000000000000000</double>
             </property>
            </widget>
           </item>

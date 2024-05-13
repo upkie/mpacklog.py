@@ -82,7 +82,7 @@ class Window:
         layout.addWidget(self.ui.plotWidget)
 
         def update_plot_widget(value):
-            self.ui.plotWidget.history_s = value
+            self.ui.plotWidget.history_duration = value
 
         self.ui.historySpin.valueChanged.connect(update_plot_widget)
 
