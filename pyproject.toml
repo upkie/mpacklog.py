@@ -26,10 +26,19 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
-    "aiofiles >=0.7.0",
-    "msgpack >=1.0.2",
+    "aiofiles >= 0.7.0",
+    "msgpack >= 1.0.2",
 ]
 keywords = ["messagepack", "serialization", "logging"]
+
+[project.optional-dependencies]
+gui = [
+    "PySide2",
+    "asyncqt >= 0.8",
+    "matplotlib >= 3.5",
+    "pyqt",
+    "qtpy >= 2.0.1",
+]
 
 [project.scripts]
 mpacklog = "mpacklog.cli:main"
