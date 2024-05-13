@@ -45,10 +45,9 @@ def parse_command_line_arguments() -> argparse.Namespace:
         description="Serve most recent values from a spine log.",
     )
     parser.add_argument(
-        "--host",
+        "destination",
         help="host name or IP address to connect to",
         type=str,
-        default="localhost",
     )
     parser.add_argument(
         "--port",
@@ -66,7 +65,7 @@ def main(argv=None) -> None:
     del os.environ["SESSION_MANAGER"]
 
     args = parse_command_line_arguments()
-    stream_client = StreamClient(args.host, args.port)
+    stream_client = StreamClient(args.destination, args.port)
     app = QtWidgets.QApplication(sys.argv)
     loop = asyncqt.QEventLoop(app)
     asyncio.set_event_loop(loop)
