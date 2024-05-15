@@ -38,16 +38,12 @@ class Window:
 
     Attributes:
         stream_client: Client to read streaming data from.
-
-    This application derives from the ``tview`` GUI distributed in
-    [moteus-gui](https://pypi.org/project/moteus-gui/).
     """
 
     stream_client: StreamClient
     tree: dict
 
     def __init__(self, stream_client: StreamClient, parent=None):
-
         current_script_dir = os.path.dirname(os.path.abspath(__file__))
         uifilename = os.path.join(current_script_dir, "mpacklog.ui")
 
@@ -110,9 +106,7 @@ class Window:
             except ConnectionResetError:
                 data = None
             if data is None:
-                logging.warning(
-                    "Connection reset by peer, plot is now frozen"
-                )
+                logging.warning("Connection reset by peer, plot is now frozen")
                 break
             try:
                 self.update_data(data, self.tree)
