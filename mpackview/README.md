@@ -13,3 +13,9 @@ $ pip install mpackview
 ```
 mpackview <hostname>
 ```
+
+## See also
+
+This application derives from the excellent ``tview`` telemetry GUI distributed
+in [moteus-gui](https://pypi.org/project/moteus-gui/). Don't hesitate to check
+out the other tools in the [mjbots](https://github.com/mjbots/) software stack.
