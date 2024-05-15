@@ -3,7 +3,7 @@ requires = ["flit_core >=2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "mpacklog"
+name = "mpackview"
 readme = "README.md"
 authors = [
     {name = "Stéphane Caron", email = "stephane.caron@normalesup.org"},
@@ -26,23 +26,17 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
-    "aiofiles >= 0.7.0",
-    "msgpack >= 1.0.2",
-]
-keywords = ["messagepack", "serialization", "logging"]
-
-[project.optional-dependencies]
-gui = [
-    "PySide2",
     "asyncqt >= 0.8",
     "matplotlib >= 3.5",
+    "mpacklog >= 3.1.0",
     "pyqt",
+    "PySide2",
     "qtpy >= 2.0.1",
 ]
+keywords = ["messagepack", "serialization", "logging", "telemetry"]
 
 [project.scripts]
-mpacklog = "mpacklog.cli:main"
-mpacklog_gui = "mpacklog.gui:main"
+mpackview = "mpackview:main"
 
 [project.urls]
 Source = "https://github.com/upkie/mpacklog.py"
