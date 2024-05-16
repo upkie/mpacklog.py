@@ -39,11 +39,12 @@ class AsyncLogger:
         """Break the loop of the `write` coroutine."""
         self.__keep_going = False
 
-    async def write(self):
+    async def write(self, flush: bool = False):
         """Continuously write messages from the logging queue to file."""
         file = await aiofiles.open(self.path, "wb")
         packer = msgpack.Packer(default=serialize, use_bin_type=True)
-        while self.__keep_going:
+        keep_going = not self.queue.empty() if flush else self.__keep_going
+        while keep_going:
             message = await self.queue.get()
             if message == {"exit": True}:
                 break
@@ -53,4 +54,9 @@ class AsyncLogger:
             # on its own core (CPUID). When running on the default core, it
             # tends to make the slack duration of the other coroutines
             await file.flush()
+            keep_going = not self.queue.empty() if flush else self.__keep_going
         await file.close()
+
+    async def flush(self):
+        """Flush messages from the logging queue to file."""
+        await self.write(flush=True)
