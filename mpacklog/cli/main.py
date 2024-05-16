@@ -13,7 +13,7 @@ from .csv_printer import CSVPrinter
 from .field_printer import FieldPrinter
 from .json_printer import JSONPrinter
 from .printer import Printer
-from .server import serve
+from .server import Server
 
 
 def get_argument_parser() -> argparse.ArgumentParser:
@@ -127,6 +127,7 @@ def main(argv=None) -> None:
             printer = JSONPrinter(args.fields)
         dump_log(args.logfile, printer, follow=args.follow)
     elif args.subcmd == "serve":
-        serve(args.log_path, args.port)
+        server = Server(args.log_path, args.port)
+        server.run()
     else:  # no subcommand
         parser.print_help()
