@@ -49,8 +49,7 @@ class Server:
         Args:
             log_file: Path to the log file to monitor.
         """
-        global last_log
-        rate = AsyncRateLimiter(frequency=2000.0, name="unpack", warn=True)
+        rate = AsyncRateLimiter(frequency=2000.0, name="unpack", warn=False)
         async with aiofiles.open(log_file, "rb") as file:
             await file.seek(0, 2)  # 0 is the offset, 2 means seek from the end
             unpacker = msgpack.Unpacker(raw=False)
@@ -66,7 +65,7 @@ class Server:
                             raise ValueError(f"{unpacked=} not a dictionary")
                         if "observation" not in unpacked:
                             raise ValueError(f"{unpacked=} has no observation")
-                        last_log = unpacked
+                        self.last_log = unpacked
                 except BrokenPipeError:  # handle e.g. piping to `head`
                     break
                 await rate.sleep()
@@ -94,7 +93,7 @@ class Server:
                     logging.warning(str(exn))
                     continue
                 if request == "get":
-                    reply = packer.pack(last_log)
+                    reply = packer.pack(self.last_log)
                     await loop.sock_sendall(client, reply)
                 await rate.sleep()
         except BrokenPipeError:

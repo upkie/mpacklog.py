@@ -34,9 +34,9 @@ class TestServer(unittest.IsolatedAsyncioTestCase):
         unpacker = msgpack.Unpacker(raw=False)
         loop = asyncio.get_event_loop()
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.setblocking(False)
         sock.settimeout(5.0)
         sock.connect(("localhost", 4949))
+        sock.setblocking(False)
 
         request = "get".encode("utf-8")
         await loop.sock_sendall(sock, request)
@@ -45,7 +45,7 @@ class TestServer(unittest.IsolatedAsyncioTestCase):
         if not data:
             return None
         unpacker.feed(data)
-        for unpacked in self.unpacker:
+        for unpacked in unpacker:
             reply_dict = unpacked
 
         sock.close()
