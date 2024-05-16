@@ -12,23 +12,31 @@ import tempfile
 import unittest
 
 import msgpack
+from loop_rate_limiters import AsyncRateLimiter
 
-from mpacklog import SyncLogger
+from mpacklog import AsyncLogger
 from mpacklog.cli.server import Server
 
 
 class TestServer(unittest.IsolatedAsyncioTestCase):
-    def setUp(self):
-        log_file = tempfile.mktemp(suffix=".mpack")
-        logger = SyncLogger(log_file)
-        logger.put({"foo": 42, "something": "else"})
-        logger.write()
-        server = Server(log_file, 4949)
-        self.server = server
-
     async def asyncSetUp(self):
         await super().asyncSetUp()
+
+        log_file = tempfile.mktemp(suffix=".mpack")
+        self.logger = AsyncLogger(log_file)
+        await self.logger.flush()
+        asyncio.create_task(self.logger.write())
+
+        self.server = Server(log_file, 4949)
         asyncio.create_task(self.server.run_async())
+        asyncio.create_task(self.log_ten_foos())
+
+    async def log_ten_foos(self):
+        rate = AsyncRateLimiter(frequency=1000.0, name="log", warn=False)
+        for foo in range(10):
+            await self.logger.put({"foo": foo})
+            await self.logger.write()
+            await rate.sleep()
 
     async def test_get(self):
         unpacker = msgpack.Unpacker(raw=False)
@@ -38,15 +46,21 @@ class TestServer(unittest.IsolatedAsyncioTestCase):
         sock.connect(("localhost", 4949))
         sock.setblocking(False)
 
-        request = "get".encode("utf-8")
-        await loop.sock_sendall(sock, request)
-        reply_dict = None
-        data = await loop.sock_recv(sock, 4096)
-        if not data:
-            return None
-        unpacker.feed(data)
-        for unpacked in unpacker:
-            reply_dict = unpacked
+        for trial in range(10):
+            request = "get".encode("utf-8")
+            await loop.sock_sendall(sock, request)
+            reply = None
+            data = await loop.sock_recv(sock, 4096)
+            if not data:
+                return None
+            unpacker.feed(data)
+            for unpacked in unpacker:
+                reply = unpacked
+            if reply:
+                break
 
         sock.close()
-        self.assertEqual(reply_dict["foo"], 42)
+        self.assertTrue("foo" in reply)
+        self.assertIsInstance(reply["foo"], int)
+        self.assertGreaterEqual(reply["foo"], 0)
+        self.assertLess(reply["foo"], 10)
