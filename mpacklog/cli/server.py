@@ -5,36 +5,15 @@
 # Copyright 2024 Inria
 
 import asyncio
-import glob
 import logging
-import os
 import socket
-from typing import Optional
 
 import aiofiles
 import msgpack
 from loop_rate_limiters import AsyncRateLimiter
 
 from mpacklog.serialize import serialize
-
-
-def find_log_file(log_path: Optional[str]) -> str:
-    """Find log file to open.
-
-    Args:
-        log_file: Path to a directory or a specific log file.
-    """
-    if os.path.exists(log_path):
-        if os.path.isfile(log_path):
-            return log_path
-    mpack_files = glob.glob(os.path.join(log_path, "*.mpack"))
-    log_file = max(mpack_files, key=os.path.getmtime)
-    logging.info(
-        "Opening the most recent log in %s: %s",
-        log_path,
-        os.path.basename(log_file),
-    )
-    return log_file
+from mpacklog.utils import find_log_file
 
 
 class Server:
