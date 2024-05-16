@@ -63,8 +63,6 @@ class Server:
                     for unpacked in unpacker:
                         if not isinstance(unpacked, dict):
                             raise ValueError(f"{unpacked=} not a dictionary")
-                        if "observation" not in unpacked:
-                            raise ValueError(f"{unpacked=} has no observation")
                         self.last_log = unpacked
                 except BrokenPipeError:  # handle e.g. piping to `head`
                     break
