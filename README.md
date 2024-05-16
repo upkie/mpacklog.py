@@ -3,7 +3,6 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/upkie/mpacklog.py/ci.yml?branch=main)](https://github.com/upkie/mpacklog.py/actions)
 [![Coverage](https://coveralls.io/repos/github/upkie/mpacklog.py/badge.svg?branch=main)](https://coveralls.io/github/upkie/mpacklog.py?branch=main)
 [![PyPI version](https://img.shields.io/pypi/v/mpacklog)](https://pypi.org/project/mpacklog/)
-[![PyPI downloads](https://static.pepy.tech/badge/mpacklog)](https://pepy.tech/project/mpacklog)
 
 Stream dictionaries to files or over the network using MessagePack in Python.
 
