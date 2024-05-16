@@ -38,6 +38,13 @@ def find_log_file(log_path: Optional[str]) -> str:
 
 
 class Server:
+
+    """Server to stream from MessagePack dictionary logs.
+
+    Attributes:
+        last_log: Last logged dictionary.
+    """
+
     last_log: dict
 
     def __init__(self, log_path: str, port: int):
