@@ -34,9 +34,10 @@ class Server:
         self.last_log = {}
 
     def run(self) -> None:
-        asyncio.run(self.__run(self.log_file, self.port))
+        """Run the server using asyncio."""
+        asyncio.run(self.async_run(self.log_file, self.port))
 
-    async def __run(self) -> None:
+    async def run_async(self) -> None:
         """Start the two server coroutines."""
         await asyncio.gather(
             self.unpack(self.log_file), self.listen(self.port)
