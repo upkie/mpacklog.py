@@ -13,6 +13,7 @@ from .csv_printer import CSVPrinter
 from .field_printer import FieldPrinter
 from .json_printer import JSONPrinter
 from .printer import Printer
+from .server import serve
 
 
 def get_argument_parser() -> argparse.ArgumentParser:
@@ -62,6 +63,24 @@ def get_argument_parser() -> argparse.ArgumentParser:
         "logfile", metavar="logfile", help="log file to open"
     )
 
+    # mpacklog serve ----------------------------------------------------------
+    serve_parser = subparsers.add_parser(
+        "serve",
+        help="Serve most recent values from a spine log.",
+    )
+    serve_parser.add_argument(
+        "log_path",
+        help="path to a log directory (open most recent log) or a log file",
+        type=str,
+    )
+    serve_parser.add_argument(
+        "--port",
+        "-p",
+        help="port to listen to",
+        type=int,
+        default=4747,
+    )
+
     return main_parser
 
 
@@ -107,5 +126,7 @@ def main(argv=None) -> None:
         elif args.format == "json":
             printer = JSONPrinter(args.fields)
         dump_log(args.logfile, printer, follow=args.follow)
+    elif args.subcmd == "serve":
+        serve(args.log_path, args.port)
     else:  # no subcommand
         parser.print_help()
