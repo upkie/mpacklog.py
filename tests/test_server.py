@@ -13,19 +13,18 @@ import unittest
 
 import msgpack
 
-from mpacklog import AsyncLogger
+from mpacklog import SyncLogger
 from mpacklog.cli.server import Server
 
 
 class TestServer(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         log_file = tempfile.mktemp(suffix=".mpack")
-        logger = AsyncLogger(log_file)
-        self.assertTrue(logger.queue.empty())
-        await logger.put({"foo": 42})
+        logger = SyncLogger(log_file)
+        logger.put({"foo": 42, "something": "else"})
+        logger.write()
         server = Server(log_file, 4949)
         self.server = server
-        self.logger = logger
 
     async def asyncSetUp(self):
         await super().asyncSetUp()
@@ -34,20 +33,20 @@ class TestServer(unittest.IsolatedAsyncioTestCase):
     async def test_get(self):
         unpacker = msgpack.Unpacker(raw=False)
         loop = asyncio.get_event_loop()
-        server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_sock.setblocking(False)
-        server_sock.settimeout(5.0)
-        server_sock.connect(("localhost", 4949))
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setblocking(False)
+        sock.settimeout(5.0)
+        sock.connect(("localhost", 4949))
 
         request = "get".encode("utf-8")
-        await loop.sock_sendall(self.server, request)
+        await loop.sock_sendall(sock, request)
         reply_dict = None
-        data = await loop.sock_recv(self.server, 4096)
+        data = await loop.sock_recv(sock, 4096)
         if not data:
             return None
         unpacker.feed(data)
         for unpacked in self.unpacker:
             reply_dict = unpacked
 
-        server_sock.close()
+        sock.close()
         self.assertEqual(reply_dict["foo"], 42)
