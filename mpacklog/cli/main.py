@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2022 Stéphane Caron
 
+"""Main command line interface function."""
+
 import argparse
 import time
 
