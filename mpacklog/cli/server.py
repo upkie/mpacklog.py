@@ -35,7 +35,7 @@ class Server:
 
     def run(self) -> None:
         """Run the server using asyncio."""
-        asyncio.run(self.async_run(self.log_file, self.port))
+        asyncio.run(self.run_async())
 
     async def run_async(self) -> None:
         """Start the two server coroutines."""
