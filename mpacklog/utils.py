@@ -4,13 +4,14 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2022 Stéphane Caron
 
+"""Utility functions."""
+
 import glob
 import logging
 import os
-from typing import Optional
 
 
-def find_log_file(log_path: Optional[str]) -> str:
+def find_log_file(log_path: str) -> str:
     """Find log file to open.
 
     Args:
