@@ -11,7 +11,7 @@
 """Callback mechanism to append new values to time series plots."""
 
 
-class PlotCallback(object):
+class PlotCallback:
     """Connect a tree item and a callback function updating its plot."""
 
     def __init__(self):
@@ -29,7 +29,7 @@ class PlotCallback(object):
         self._index += 1
         self._callbacks[result] = handler
 
-        class Connection(object):
+        class Connection:
             def __init__(self, parent, index):
                 self.parent = parent
                 self.index = index

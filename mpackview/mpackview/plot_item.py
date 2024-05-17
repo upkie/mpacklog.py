@@ -18,7 +18,7 @@ import matplotlib
 from .plot_callback import PlotCallback
 
 
-class PlotItem(object):
+class PlotItem:
     """Data associated with a plot.
 
     Attributes:
