@@ -6,6 +6,8 @@
 
 """GUI to stream MessagePack log files."""
 
+__version__ = "3.1.0"
+
 from .main import main
 
 __all__ = [
