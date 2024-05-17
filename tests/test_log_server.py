@@ -12,7 +12,6 @@ import tempfile
 import unittest
 
 import msgpack
-from loop_rate_limiters import AsyncRateLimiter
 
 from mpacklog import AsyncLogger, LogServer
 
@@ -35,10 +34,9 @@ class TestLogServer(unittest.IsolatedAsyncioTestCase):
         await self.server.stop()
 
     async def log_ten_foos(self):
-        rate = AsyncRateLimiter(frequency=1000.0, name="log", warn=False)
         for foo in range(10):
             await self.logger.put({"foo": foo})
-            await rate.sleep()
+            await asyncio.sleep(0.001)
 
     async def test_get(self):
         unpacker = msgpack.Unpacker(raw=False)
