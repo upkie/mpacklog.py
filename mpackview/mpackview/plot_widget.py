@@ -17,6 +17,7 @@ import matplotlib.figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg  # noqa: E402
 from qtpy import QtCore, QtWidgets
 
+from .plot_callback import PlotCallback
 from .plot_item import PlotItem
 
 qt_backend = matplotlib.backends.backend_qt5agg
@@ -71,14 +72,14 @@ class PlotWidget(QtWidgets.QWidget):
     def handle_pause(self, value):
         self.paused = value
 
-    def add_plot(self, name, signal, axis_number):
+    def add_plot(self, name, callback: PlotCallback, axis_number):
         axis = self.left_axis
         if axis_number == 1:
             if self.right_axis is None:
                 self.right_axis = self.left_axis.twinx()
                 self.right_axis.legend_loc = 2
             axis = self.right_axis
-        item = PlotItem(axis, self, name, signal)
+        item = PlotItem(axis, self, name, callback)
         return item
 
     def remove_plot(self, item):

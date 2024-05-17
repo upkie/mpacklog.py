@@ -8,31 +8,52 @@
 # This file incorporates code from utils/gui/moteus_gui/tview.py
 # (https://github.com/mjbots/moteus, 49c698a63f0ded22528ad7539cc2e27e41cd486d)
 
-"""Interactively display and update values from an embedded device."""
+"""Data associated with a plot."""
 
 import time
+from typing import List
 
 import matplotlib
 
-COLORS = "rbgcmyk"
+from .plot_callback import PlotCallback
 
 
 class PlotItem(object):
-    def __init__(self, axis, plot_widget, name, signal):
+    """Data associated with a plot.
+
+    Attributes:
+        COLORS: Successive plot colors, as a string of color-code characters.
+        xdata: Matplotlib x-axis data.
+        ydata: Matplotlib y-axis data.
+    """
+
+    COLORS = "rbgcmyk"
+    xdata: List[float]
+    ydata: List[float]
+
+    def __init__(self, axis, plot_widget, name, callback: PlotCallback):
+        """Initialize plot item.
+
+        Args:
+            axis: Matplotlib axis.
+            plot_widget: Parent plot widget.
+            name: Plot label.
+            callback: Callback handle.
+        """
         self.axis = axis
-        self.plot_widget = plot_widget
-        self.name = name
+        self.connection = callback.connect(self.handle_update)
         self.line = None
+        self.name = name
+        self.plot_widget = plot_widget
         self.xdata = []
         self.ydata = []
-        self.connection = signal.connect(self.handle_update)
 
     def make_line(self):
         line = matplotlib.lines.Line2D([], [])
         line.set_label(self.name)
-        line.set_color(COLORS[self.plot_widget.next_color])
+        line.set_color(self.COLORS[self.plot_widget.next_color])
         self.plot_widget.next_color = (self.plot_widget.next_color + 1) % len(
-            COLORS
+            self.COLORS
         )
         self.axis.add_line(line)
         self.axis.legend(loc=self.axis.legend_loc)

@@ -12,11 +12,19 @@
 
 
 class PlotCallback(object):
+    """Connect a tree item and a callback function updating its plot."""
+
     def __init__(self):
+        """Initialize callback."""
         self._index = 0
         self._callbacks = {}
 
     def connect(self, handler):
+        """Connect a new callback function.
+
+        Args:
+            handler: Callback function.
+        """
         result = self._index
         self._index += 1
         self._callbacks[result] = handler
