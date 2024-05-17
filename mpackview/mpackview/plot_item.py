@@ -48,7 +48,8 @@ class PlotItem:
         self.xdata = []
         self.ydata = []
 
-    def make_line(self):
+    def make_line(self) -> None:
+        """Add a new line to the plot."""
         line = matplotlib.lines.Line2D([], [])
         line.set_label(self.name)
         line.set_color(self.COLORS[self.plot_widget.next_color])
@@ -59,7 +60,8 @@ class PlotItem:
         self.axis.legend(loc=self.axis.legend_loc)
         self.line = line
 
-    def remove(self):
+    def remove(self) -> None:
+        """Remove line from the plot."""
         self.line.remove()
         self.connection.remove()
         # NOTE jpieper: matplotlib gives us no better way to remove a
@@ -72,7 +74,12 @@ class PlotItem:
             self.axis.legend(loc=self.axis.legend_loc)
         self.plot_widget.canvas.draw()
 
-    def handle_update(self, value):
+    def handle_update(self, value) -> None:
+        """Callback function called when a new value is added to the plot.
+
+        Args:
+            value: New value appended to the plot.
+        """
         if self.plot_widget.paused:
             return
 
@@ -87,8 +94,8 @@ class PlotItem:
         # one before the window.
         oldest_time = now - self.plot_widget.history_duration
         oldest_index = None
-        for i in range(len(self.xdata)):
-            if self.xdata[i] >= oldest_time:
+        for i, xdata_i in enumerate(self.xdata):
+            if xdata_i >= oldest_time:
                 oldest_index = i - 1
                 break
 
