@@ -29,7 +29,6 @@ dependencies = [
     "asyncqt >= 0.8",
     "matplotlib >= 3.5",
     "mpacklog >= 3.1.0",
-    "pyqt",
     "PySide2",
     "qtpy >= 2.0.1",
 ]
