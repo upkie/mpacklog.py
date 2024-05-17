@@ -7,6 +7,7 @@
 """Main command line interface function."""
 
 import argparse
+import logging
 import time
 
 import msgpack
@@ -130,6 +131,7 @@ def main(argv=None) -> None:
             printer = JSONPrinter(args.fields)
         dump_log(args.logfile, printer, follow=args.follow)
     elif args.subcmd == "serve":
+        logging.getLogger().setLevel(logging.INFO)
         server = LogServer(args.log_path, args.port)
         server.run()
     else:  # no subcommand
