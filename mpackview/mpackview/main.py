@@ -13,7 +13,7 @@
 import argparse
 import asyncio
 import os
-import sys
+from typing import List, Optional
 
 import PySide2  # noqa: E402 F401
 from qtpy import QtCore, QtWidgets
@@ -59,10 +59,15 @@ def parse_command_line_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main(argv=None) -> None:
+def main(argv: Optional[List[str]] = None) -> None:
+    """Main function to start up the GUI.
+
+    Args:
+        argv: Command-line arguments.
+    """
     args = parse_command_line_arguments()
     stream_client = StreamClient(args.destination, args.port)
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication(argv if argv is not None else [])
     loop = asyncqt.QEventLoop(app)
     asyncio.set_event_loop(loop)
 

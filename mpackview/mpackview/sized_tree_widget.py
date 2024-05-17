@@ -16,6 +16,7 @@ class SizedTreeWidget(QtWidgets.QTreeWidget):
     """Sized tree widget.
 
     Attributes:
+        COLUMN_PADDING: Column padding in pixels.
         MIN_VALUE_WIDTH: Minimum width in pixels for the Value column.
     """
 

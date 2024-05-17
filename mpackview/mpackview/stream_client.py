@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2024 Inria
 
+"""Stream MessagePack data from a log server."""
+
 import asyncio
 import socket
 from typing import Optional
@@ -12,6 +14,7 @@ import msgpack
 
 
 class StreamClient:
+    """Stream MessagePack data from a log server."""
 
     def __init__(self, host: str, port: int) -> None:
         """Connect to a server.
