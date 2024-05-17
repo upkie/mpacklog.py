@@ -15,7 +15,7 @@ import asyncio
 import os
 import sys
 
-import PySide2  # noqa: E402
+import PySide2  # noqa: E402 F401
 from qtpy import QtCore, QtWidgets
 
 from .stream_client import StreamClient
