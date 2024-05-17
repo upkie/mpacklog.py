@@ -14,11 +14,10 @@ import unittest
 import msgpack
 from loop_rate_limiters import AsyncRateLimiter
 
-from mpacklog import AsyncLogger
-from mpacklog.cli.server import Server
+from mpacklog import AsyncLogger, LogServer
 
 
-class TestServer(unittest.IsolatedAsyncioTestCase):
+class TestLogServer(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         await super().asyncSetUp()
 
@@ -27,7 +26,7 @@ class TestServer(unittest.IsolatedAsyncioTestCase):
         await self.logger.flush()
         asyncio.create_task(self.logger.write())
 
-        self.server = Server(log_file, 4949)
+        self.server = LogServer(log_file, 4949)
         asyncio.create_task(self.server.run_async())
         asyncio.create_task(self.log_ten_foos())
 
