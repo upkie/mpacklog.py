@@ -27,11 +27,11 @@ class Server:
     last_log: dict
 
     def __init__(self, log_path: str, port: int):
-        logging.getLogger().setLevel(logging.INFO)
-        self.log_file = find_log_file(log_path)
+        self.__keep_going = True
+        self.__stopped = 0
+        self.last_log = {}
         self.log_path = log_path
         self.port = port
-        self.last_log = {}
 
     def run(self) -> None:
         """Run the server using asyncio."""
@@ -39,21 +39,28 @@ class Server:
 
     async def run_async(self) -> None:
         """Start the two server coroutines."""
-        await asyncio.gather(
-            self.unpack(self.log_file), self.listen(self.port)
-        )
+        await asyncio.gather(self.unpack(), self.listen())
 
-    async def unpack(self, log_file: str):
-        """Unpack latest data from log file.
+    async def stop(self):
+        """Stop the two server coroutines."""
+        loop = asyncio.get_event_loop()
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(("localhost", self.port))
+        sock.setblocking(False)
+        self.__keep_going = False  # stop accepting new sockets
+        await loop.sock_sendall(sock, "stop".encode("utf-8"))
+        while self.__stopped < 2:
+            await asyncio.sleep(0.01)
+        sock.close()
 
-        Args:
-            log_file: Path to the log file to monitor.
-        """
+    async def unpack(self):
+        """Unpack latest data from log file."""
+        log_file = find_log_file(self.log_path)
         rate = AsyncRateLimiter(frequency=2000.0, name="unpack", warn=False)
         async with aiofiles.open(log_file, "rb") as file:
             await file.seek(0, 2)  # 0 is the offset, 2 means seek from the end
             unpacker = msgpack.Unpacker(raw=False)
-            while True:
+            while self.__keep_going:
                 data = await file.read(4096)
                 if not data:  # end of file
                     await rate.sleep()
@@ -81,7 +88,7 @@ class Server:
         logging.info("New connection from %s", address)
         rate = AsyncRateLimiter(frequency=2000.0, name="serve", warn=False)
         try:
-            while request != "stop":
+            while self.__keep_going:
                 data = await loop.sock_recv(client, 4096)
                 if not data:
                     break
@@ -93,24 +100,25 @@ class Server:
                 if request == "get":
                     reply = packer.pack(self.last_log)
                     await loop.sock_sendall(client, reply)
+                elif request == "stop":
+                    self.__keep_going = False
                 await rate.sleep()
         except BrokenPipeError:
             logging.info("Connection closed by %s", address)
         logging.info("Closing connection with %s", address)
         client.close()
+        self.__stopped += 1
 
-    async def listen(self, port: int):
-        """Listen to clients connecting on a given port.
-
-        Args:
-            port: Port to listen to.
-        """
+    async def listen(self):
+        """Listen to clients connecting on a given port."""
         loop = asyncio.get_event_loop()
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_socket.bind(("", port))
+        server_socket.bind(("", self.port))
         server_socket.listen(8)
         server_socket.setblocking(False)  # required by loop.sock_accept
-        while True:
+        while self.__keep_going:
             client_socket, address = await loop.sock_accept(server_socket)
             loop.create_task(self.serve(client_socket, address))
+        server_socket.close()
+        self.__stopped += 1
