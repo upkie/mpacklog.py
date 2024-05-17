@@ -31,6 +31,10 @@ class TestServer(unittest.IsolatedAsyncioTestCase):
         asyncio.create_task(self.server.run_async())
         asyncio.create_task(self.log_ten_foos())
 
+    async def asyncTearDown(self):
+        await self.logger.stop()
+        await self.server.stop()
+
     async def log_ten_foos(self):
         rate = AsyncRateLimiter(frequency=1000.0, name="log", warn=False)
         for foo in range(10):
