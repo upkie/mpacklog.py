@@ -32,11 +32,19 @@ class PlotWidget(QtWidgets.QWidget):
 
     Attributes:
         history_duration: History duration in seconds.
+        paused: True if and only if plotting is paused.
     """
 
     history_duration: float
+    paused: bool
 
     def __init__(self, *args, **kwargs):
+        """Initialize widget.
+
+        Args:
+            args: Positional arguments for parent constructor.
+            kwargs: Keyword arguments for parent constructor.
+        """
         QtWidgets.QWidget.__init__(self, *args, **kwargs)
 
         self.history_duration = DEFAULT_HISTORY_DURATION
@@ -69,10 +77,27 @@ class PlotWidget(QtWidgets.QWidget):
 
         self.canvas.setFocusPolicy(QtCore.Qt.ClickFocus)
 
-    def handle_pause(self, value):
-        self.paused = value
+    def handle_pause(self, state: bool) -> None:
+        """Pause plot at a given state.
 
-    def add_plot(self, name, callback: PlotCallback, axis_number):
+        Args:
+            state: Pause state.
+        """
+        self.paused = state
+
+    def add_plot(
+        self, name: str, callback: PlotCallback, axis_number: int
+    ) -> PlotItem:
+        """Add a new plot to track.
+
+        Args:
+            name: Full name in the data tree.
+            callback: Plot callback connecting tree item and plot data.
+            axis_number: Left (0) or right (1) axis.
+
+        Returns:
+            New plot item.
+        """
         axis = self.left_axis
         if axis_number == 1:
             if self.right_axis is None:
@@ -82,17 +107,23 @@ class PlotWidget(QtWidgets.QWidget):
         item = PlotItem(axis, self, name, callback)
         return item
 
-    def remove_plot(self, item):
+    def remove_plot(self, item: PlotItem) -> None:
+        """Remove a plot.
+
+        Args:
+            item: Plot item corresponding to the plot to remove.
+        """
         item.remove()
 
-    def data_update(self):
+    def data_update(self) -> None:
+        """Redraw plot after data has been updated."""
         now = time.time()
         elapsed = now - self.last_draw_time
         if elapsed > 0.1:
             self.last_draw_time = now
             self.canvas.draw()
 
-    def get_axes_keys(self):
+    def __get_axes_keys(self):
         result = []
         result.append(("1", self.left_axis))
         if self.right_axis:
@@ -102,7 +133,7 @@ class PlotWidget(QtWidgets.QWidget):
     def handle_key_press(self, event):
         if event.key not in ["1", "2"]:
             return
-        for key, axis in self.get_axes_keys():
+        for key, axis in self.__get_axes_keys():
             if key == event.key:
                 axis.set_navigate(True)
             else:
@@ -111,5 +142,5 @@ class PlotWidget(QtWidgets.QWidget):
     def handle_key_release(self, event):
         if event.key not in ["1", "2"]:
             return
-        for key, axis in self.get_axes_keys():
+        for key, axis in self.__get_axes_keys():
             axis.set_navigate(True)
