@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2024 Inria
 
+"""Server to stream from MessagePack dictionary logs."""
+
 import asyncio
 import logging
 import socket
@@ -84,7 +86,7 @@ class LogServer:
                     break
                 await rate.sleep()
 
-    async def serve(self, client, address):
+    async def serve(self, client, address) -> None:
         """Server a client connection.
 
         Args:
