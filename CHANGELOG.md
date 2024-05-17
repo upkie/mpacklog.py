@@ -14,6 +14,10 @@
 - CICD: Update ruff to 0.4.3
 - Use SPDX license identifiers in all source files
 
+### Fixed
+
+- AsyncLogger: Wait for logger to stop properly
+
 ## [3.1.0] - 2023/09/29
 
 ### Added
