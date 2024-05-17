@@ -16,16 +16,26 @@ from mpacklog.serialize import serialize
 from mpacklog.utils import find_log_file
 
 
-class Server:
+class LogServer:
     """Server to stream from MessagePack dictionary logs.
 
     Attributes:
         last_log: Last logged dictionary.
+        log_path: Path to a log file, or a directory containing log files.
+        port: Port number to listen to.
     """
 
     last_log: dict
+    log_path: str
+    port: int
 
     def __init__(self, log_path: str, port: int):
+        """Prepare a new server.
+
+        Args:
+            log_path: Path to a log file, or a directory containing log files.
+            port: Port number to listen to.
+        """
         self.__keep_going = True
         self.__stopped = 0
         self.last_log = {}
