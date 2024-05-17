@@ -27,6 +27,7 @@ classifiers = [
 ]
 dependencies = [
     "aiofiles >= 0.7.0",
+    "loop-rate-limiters >= 1.0.0",
     "msgpack >= 1.0.2",
 ]
 keywords = ["messagepack", "serialization", "logging"]
