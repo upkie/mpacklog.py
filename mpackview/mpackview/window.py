@@ -48,10 +48,10 @@ class Window:
         uifilename = os.path.join(current_script_dir, "mpacklog.ui")
 
         loader = QtUiTools.QUiLoader()
-        uifile = QtCore.QFile(uifilename)
-        uifile.open(QtCore.QFile.ReadOnly)
-        self.ui = loader.load(uifile, parent)
-        uifile.close()
+        ui_file = QtCore.QFile(uifilename)  # noqa: E1101
+        ui_file.open(QtCore.QFile.ReadOnly)  # noqa: E1101
+        self.ui = loader.load(ui_file, parent)
+        ui_file.close()
 
         self.ui.telemetryTreeWidget = SizedTreeWidget()
         self.ui.telemetryDock.setWidget(self.ui.telemetryTreeWidget)
