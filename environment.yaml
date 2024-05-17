@@ -5,6 +5,5 @@ dependencies:
     - asyncqt >= 0.8
     - matplotlib >= 3.5
     - msgpack-python
-    - pyqt
     - pyside2
     - qtpy >= 2.0.1
