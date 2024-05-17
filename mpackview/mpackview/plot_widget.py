@@ -31,11 +31,19 @@ class PlotWidget(QtWidgets.QWidget):
     """Plot widget.
 
     Attributes:
+        canvas: Canvas to plot figure to.
+        figure: Matplotlib figure.
         history_duration: History duration in seconds.
+        last_draw_time: Last time the canvas was redrawn.
+        next_color: Next plot color to pick.
         paused: True if and only if plotting is paused.
     """
 
+    canvas: FigureCanvasQTAgg
+    figure: matplotlib.figure.Figure
     history_duration: float
+    last_draw_time: float
+    next_color: int
     paused: bool
 
     def __init__(self, *args, **kwargs):
@@ -55,7 +63,6 @@ class PlotWidget(QtWidgets.QWidget):
         self.figure = matplotlib.figure.Figure()
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.canvas.setMinimumSize(10, 10)
-
         self.canvas.mpl_connect("key_press_event", self.handle_key_press)
         self.canvas.mpl_connect("key_release_event", self.handle_key_release)
 
@@ -131,6 +138,11 @@ class PlotWidget(QtWidgets.QWidget):
         return result
 
     def handle_key_press(self, event):
+        """Handle a key-press event.
+
+        Args:
+            event: Event to handle.
+        """
         if event.key not in ["1", "2"]:
             return
         for key, axis in self.__get_axes_keys():
@@ -140,6 +152,11 @@ class PlotWidget(QtWidgets.QWidget):
                 axis.set_navigate(False)
 
     def handle_key_release(self, event):
+        """Handle a key-release event.
+
+        Args:
+            event: Event to handle.
+        """
         if event.key not in ["1", "2"]:
             return
         for key, axis in self.__get_axes_keys():
