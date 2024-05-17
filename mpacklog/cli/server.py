@@ -17,7 +17,6 @@ from mpacklog.utils import find_log_file
 
 
 class Server:
-
     """Server to stream from MessagePack dictionary logs.
 
     Attributes:
