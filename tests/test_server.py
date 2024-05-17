@@ -39,7 +39,6 @@ class TestServer(unittest.IsolatedAsyncioTestCase):
         rate = AsyncRateLimiter(frequency=1000.0, name="log", warn=False)
         for foo in range(10):
             await self.logger.put({"foo": foo})
-            await self.logger.write()
             await rate.sleep()
 
     async def test_get(self):
