@@ -1,9 +1,10 @@
-name: mpacklog
+name: mpackview
 channels:
     - https://conda.anaconda.org/conda-forge
 dependencies:
+    - aiofiles >= 0.7.0
     - asyncqt >= 0.8
     - matplotlib >= 3.5
-    - msgpack-python
-    - pyside2
+    - msgpack-python >= 1.0.2
+    - pyside2 >= 5.11.0
     - qtpy >= 2.0.1

@@ -32,14 +32,6 @@ dependencies = [
 ]
 keywords = ["messagepack", "serialization", "logging"]
 
-[project.optional-dependencies]
-gui = [
-    "PySide2",
-    "asyncqt >= 0.8",
-    "matplotlib >= 3.5",
-    "qtpy >= 2.0.1",
-]
-
 [project.scripts]
 mpacklog = "mpacklog.cli:main"
 mpacklog_gui = "mpacklog.gui:main"
