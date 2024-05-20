@@ -154,20 +154,26 @@ class Window:
             value = data[key if is_dict else index]
             self.update_tree(child, value, node[key])
 
-    def update_data(self, data, tree):
-        item = tree["__item__"]
+    def update_data(self, data: Union[dict, list, Any], node: dict) -> None:
+        """Update data in the tree of the GUI left pane.
+
+        Args:
+            data: Data to update the tree with.
+            node: Node corresponding to the data in the tree.
+        """
+        item = node["__item__"]
         if isinstance(data, dict):
             for key, value in data.items():
-                self.update_data(value, tree[key])
+                self.update_data(value, node[key])
         elif isinstance(data, list):
             for index, value in enumerate(data):
-                self.update_data(value, tree[str(index)])
+                self.update_data(value, node[str(index)])
         else:  # data is not a dictionary
             item.setText(1, format_value(data))
-            if "__plot__" in tree:
-                active = tree["__plot__"].update(data)
+            if "__plot__" in node:
+                active = node["__plot__"].update(data)
                 if not active:
-                    del tree["__plot__"]
+                    del node["__plot__"]
 
     def handle_tree_expanded(self, item):
         self.ui.telemetryTreeWidget.resizeColumnToContents(0)
