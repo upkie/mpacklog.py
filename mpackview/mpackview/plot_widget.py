@@ -27,7 +27,9 @@ qt_backend = matplotlib.backends.backend_qt5agg
 DEFAULT_HISTORY_DURATION: float = 10.0  # seconds
 
 
-class PlotWidget(QtWidgets.QWidget):
+class PlotWidget(
+    QtWidgets.QWidget
+):  # pylint: disable=too-many-instance-attributes
     """Plot widget.
 
     Attributes:
