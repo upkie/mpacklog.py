@@ -8,6 +8,8 @@
 # This file incorporates code from utils/gui/moteus_gui/tview.py
 # (https://github.com/mjbots/moteus, 49c698a63f0ded22528ad7539cc2e27e41cd486d)
 
+"""Main application window."""
+
 import asyncio
 import logging
 import os
@@ -20,18 +22,7 @@ from .plot_callback import PlotCallback
 from .plot_widget import PlotWidget
 from .sized_tree_widget import SizedTreeWidget
 from .stream_client import StreamClient
-
-
-def format_value(value) -> str:
-    """Format incoming values for the Values column.
-
-    Args:
-        value: Value to format as a string.
-
-    Returns:
-        Value formatted as a string.
-    """
-    return f"{value:.2g}" if isinstance(value, float) else str(value)
+from .utils import format_value
 
 
 class Window:
