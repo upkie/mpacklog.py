@@ -14,7 +14,7 @@
 class PlotCallback:
     """Connect a tree item and a callback function updating its plot."""
 
-    class Connection:
+    class Connection:  # pylint: disable=too-few-public-methods
         """Remember callback index in parent list."""
 
         def __init__(self, parent: "PlotCallback", index: int):
