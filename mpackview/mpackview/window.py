@@ -13,7 +13,7 @@
 import asyncio
 import logging
 import os
-from typing import Any, Union
+from typing import Any, Tuple, Union
 
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
@@ -193,6 +193,32 @@ class Window:
         if user_data:
             user_data.collapse()
 
+    def get_node_name_from_item(
+        self,
+        item: QtWidgets.QTreeWidgetItem,
+    ) -> Tuple[Union[dict, Any], str]:
+        """Get internal tree node and name string from a GUI tree item.
+
+        Args:
+            item: Tree item from the GUI.
+
+        Returns:
+            Pair consisting of the corresponding internal-tree node (either a
+            dictionary for an internal node, or a value) and its full
+            dot-separated name.
+        """
+        top = item
+        keys = []
+        while top:
+            keys.append(top.text(0))
+            top = top.parent()
+        keys.reverse()
+        node = self.tree
+        for key in keys:
+            node = node[key]
+        name = ".".join(keys)
+        return node, name
+
     def handle_telemetry_context_menu(self, pos: QtCore.QPoint) -> None:
         """Display a right-click context menu in the telemetry tree.
 
@@ -207,27 +233,20 @@ class Window:
         plot_left_action = menu.addAction("Plot Left")
         plot_right_action = menu.addAction("Plot Right")
         plot_actions = [plot_left_action, plot_right_action]
-
         menu.addSeparator()
         copy_name_action = menu.addAction("Copy Name")
         copy_value_action = menu.addAction("Copy Value")
 
         requested = menu.exec_(self.ui.telemetryTreeWidget.mapToGlobal(pos))
         if requested in plot_actions:
-            top = item
-            keys = []
-            while top:
-                keys.append(top.text(0))
-                top = top.parent()
-            keys.reverse()
-            name = ".".join(keys)
-            node = self.tree
-            for key in keys:
-                node = node[key]
+            node, name = self.get_node_name_from_item(item)
             callback = PlotCallback()
             node["__plot__"] = callback
-            axis = 1 if requested == plot_right_action else 0
-            plot_item = self.ui.plotWidget.add_plot(name, callback, axis)
+            plot_item = self.ui.plotWidget.add_plot(
+                name,
+                callback,
+                axis_number=1 if requested == plot_right_action else 0,
+            )
             self.ui.plotItemCombo.addItem(name, plot_item)
         elif requested == copy_name_action:
             QtWidgets.QApplication.clipboard().setText(item.text(0))
