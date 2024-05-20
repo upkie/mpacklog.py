@@ -89,9 +89,11 @@ class Window:
         self.tree = {}
 
     def show(self):
+        """Show user interface."""
         self.ui.show()
 
     def handle_startup(self):
+        """Method called at startup."""
         asyncio.create_task(self.run())
 
     async def run(self):
@@ -115,22 +117,30 @@ class Window:
                 self.update_data(data, self.tree)
             await asyncio.sleep(0.01)
 
-    def update_tree(self, item, data, tree: dict):
-        tree["__item__"] = item
+    def update_tree(self, item, data, node: dict) -> None:
+        """Update tree structure in the left pane.
+
+        Args:
+            item: Tree item on the Qt side.
+            data: Data corresponding to that node: a dictionary or a list for
+                internal nodes, and a value for leaves.
+            node: Node in the internal tree on the data side.
+        """
+        node["__item__"] = item
         is_dict = isinstance(data, dict)
         is_list = isinstance(data, list)
         if not is_dict and not is_list:
             return
         keys = sorted(data.keys()) if is_dict else map(str, range(len(data)))
         for index, key in enumerate(keys):
-            if key not in tree:
+            if key not in node:
                 child = QtWidgets.QTreeWidgetItem(item)
                 child.setText(0, key)
-                tree[key] = {}
+                node[key] = {}
             else:  # item is already in the tree
-                child = tree[key]["__item__"]
+                child = node[key]["__item__"]
             value = data[key] if is_dict else data[index]
-            self.update_tree(child, value, tree[key])
+            self.update_tree(child, value, node[key])
 
     def update_data(self, data, tree):
         item = tree["__item__"]
