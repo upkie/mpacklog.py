@@ -11,6 +11,7 @@
 import asyncio
 import logging
 import os
+from typing import Any, Dict, List, Union
 
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
@@ -38,6 +39,8 @@ class Window:
 
     Attributes:
         stream_client: Client to read streaming data from.
+        tree: Internal tree connecting the GUI tree from the left panel and
+            data streamed from mpacklog.
     """
 
     stream_client: StreamClient
@@ -117,14 +120,20 @@ class Window:
                 self.update_data(data, self.tree)
             await asyncio.sleep(0.01)
 
-    def update_tree(self, item, data, node: dict) -> None:
+    def update_tree(
+        self,
+        item: QtWidgets.QTreeWidgetItem,
+        data: Union[Dict, List, Any],
+        node: Dict,
+    ) -> None:
         """Update tree structure in the left pane.
 
         Args:
-            item: Tree item on the Qt side.
-            data: Data corresponding to that node: a dictionary or a list for
-                internal nodes, and a value for leaves.
-            node: Node in the internal tree on the data side.
+            item: Tree widget item from the left GUI panel.
+            data: Deserialized object to read the tree structure from. A
+                dictionary or a list yields an internal node in the tree, while
+                a value yields a leaf.
+            node: Node in the internal tree.
         """
         node["__item__"] = item
         is_dict = isinstance(data, dict)
