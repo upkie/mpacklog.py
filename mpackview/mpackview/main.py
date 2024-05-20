@@ -15,7 +15,7 @@ import asyncio
 import os
 from typing import List, Optional
 
-import PySide2  # noqa: E402 F401
+import PySide2  # noqa: E402 F401 pylint: disable=unused-import
 from qtpy import QtCore, QtWidgets
 
 from .stream_client import StreamClient
