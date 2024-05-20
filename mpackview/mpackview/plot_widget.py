@@ -35,16 +35,24 @@ class PlotWidget(QtWidgets.QWidget):
         figure: Matplotlib figure.
         history_duration: History duration in seconds.
         last_draw_time: Last time the canvas was redrawn.
+        left_axis: Left plot axis.
         next_color: Next plot color to pick.
+        pause_action: GUI action for the pause button.
         paused: True if and only if plotting is paused.
+        right_axis: Right plot axis.
+        toolbar: GUI toolbar with a pause button.
     """
 
     canvas: FigureCanvasQTAgg
     figure: matplotlib.figure.Figure
     history_duration: float
     last_draw_time: float
+    left_axis: matplotlib.axes.Axes
     next_color: int
+    pause_action: QtWidgets.QAction
     paused: bool
+    right_axis: matplotlib.axes.Axes
+    toolbar: qt_backend.NavigationToolbar2QT
 
     def __init__(self, *args, **kwargs):
         """Initialize widget.
@@ -56,9 +64,9 @@ class PlotWidget(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, *args, **kwargs)
 
         self.history_duration = DEFAULT_HISTORY_DURATION
+        self.last_draw_time = 0.0
         self.next_color = 0
         self.paused = False
-        self.last_draw_time = 0.0
 
         self.figure = matplotlib.figure.Figure()
         self.canvas = FigureCanvasQTAgg(self.figure)
