@@ -41,12 +41,12 @@ class SizedTreeWidget(QtWidgets.QTreeWidget):
         self.header().setSectionResizeMode(1, QHeaderView.Interactive)
         self.header().setDefaultAlignment(QtCore.Qt.AlignLeft)
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event):  # pylint: disable=invalid-name
         """Resize first column (Name) to keep the Value column width fixed."""
         width = self.width() - self.MIN_VALUE_WIDTH - self.COLUMN_PADDING
         self.setColumnWidth(0, width)
         super().resizeEvent(event)
 
-    def sizeHint(self):
+    def sizeHint(self):  # pylint: disable=invalid-name
         """Initial guess for widget dimensions."""
         return QtCore.QSize(250, 500)
