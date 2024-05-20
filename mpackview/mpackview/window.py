@@ -175,18 +175,39 @@ class Window:
                 if not active:
                     del node["__plot__"]
 
-    def handle_tree_expanded(self, item):
+    def handle_tree_expanded(
+        self,
+        item: QtWidgets.QTreeWidgetItem,
+    ) -> None:
+        """Handle event where a tree item is expanded.
+
+        Args:
+            item: Tree item that was expanded.
+        """
         self.ui.telemetryTreeWidget.resizeColumnToContents(0)
         user_data = item.data(0, QtCore.Qt.UserRole)
         if user_data:
             user_data.expand()
 
-    def handle_tree_collapsed(self, item):
+    def handle_tree_collapsed(
+        self,
+        item: QtWidgets.QTreeWidgetItem,
+    ) -> None:
+        """Handle event where a tree item is collapsed.
+
+        Args:
+            item: Tree item that was collapsed.
+        """
         user_data = item.data(0, QtCore.Qt.UserRole)
         if user_data:
             user_data.collapse()
 
-    def handle_telemetry_context_menu(self, pos):
+    def handle_telemetry_context_menu(self, pos: QtCore.QPoint) -> None:
+        """Display a right-click context menu in the telemetry tree.
+
+        Args:
+            pos: Coordinates where the user right-clicked.
+        """
         item = self.ui.telemetryTreeWidget.itemAt(pos)
         if item.childCount() > 0:
             return
@@ -225,6 +246,7 @@ class Window:
             pass
 
     def handle_plot_item_remove(self):
+        """Handle removal of a plot item."""
         index = self.ui.plotItemCombo.currentIndex()
         if index < 0:
             return
