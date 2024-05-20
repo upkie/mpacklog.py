@@ -8,8 +8,10 @@
 # This file incorporates code from utils/gui/moteus_gui/tview.py
 # (https://github.com/mjbots/moteus, 49c698a63f0ded22528ad7539cc2e27e41cd486d)
 
+"""Sized tree widget for Qt application window."""
+
 from qtpy import QtCore, QtWidgets
-from qtpy.QtWidgets import QHeaderView
+from qtpy.QtWidgets import QHeaderView  # pylint: disable=no-name-in-module
 
 
 class SizedTreeWidget(QtWidgets.QTreeWidget):
