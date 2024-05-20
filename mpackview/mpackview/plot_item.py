@@ -11,7 +11,7 @@
 """Data associated with a plot."""
 
 import time
-from typing import List
+from typing import List, Optional
 
 import matplotlib
 
@@ -28,6 +28,7 @@ class PlotItem:
     """
 
     COLORS = "rbgcmyk"
+    line: Optional[matplotlib.lines.Line2D]
     xdata: List[float]
     ydata: List[float]
 
@@ -48,8 +49,12 @@ class PlotItem:
         self.xdata = []
         self.ydata = []
 
-    def make_line(self) -> None:
-        """Add a new line to the plot."""
+    def make_line(self) -> matplotlib.lines.Line2D:
+        """Add a new line to the plot.
+
+        Returns:
+            New line.
+        """
         line = matplotlib.lines.Line2D([], [])
         line.set_label(self.name)
         line.set_color(self.COLORS[self.plot_widget.next_color])
@@ -59,10 +64,12 @@ class PlotItem:
         self.axis.add_line(line)
         self.axis.legend(loc=self.axis.legend_loc)
         self.line = line
+        return line
 
     def remove(self) -> None:
         """Remove line from the plot."""
-        self.line.remove()
+        if self.line is not None:
+            self.line.remove()
         self.connection.remove()
         # NOTE jpieper: matplotlib gives us no better way to remove a
         # legend.
@@ -83,9 +90,7 @@ class PlotItem:
         if self.plot_widget.paused:
             return
 
-        if self.line is None:
-            self.make_line()
-
+        line = self.line if self.line is not None else self.make_line()
         now = time.time()
         self.xdata.append(now)
         self.ydata.append(value)
@@ -103,7 +108,7 @@ class PlotItem:
             self.xdata = self.xdata[oldest_index:]
             self.ydata = self.ydata[oldest_index:]
 
-        self.line.set_data(self.xdata, self.ydata)
+        line.set_data(self.xdata, self.ydata)
         self.axis.relim()
         self.axis.autoscale()
         self.plot_widget.data_update()
