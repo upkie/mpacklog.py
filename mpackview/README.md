@@ -16,7 +16,6 @@ mpackview <hostname>
 
 ## See also
 
-This application derives from the excellent ``tview`` telemetry GUI distributed
-in [moteus-gui](https://pypi.org/project/moteus-gui/) (the name ``mpackview``
-is itself a reference). Don't hesitate to check out the other tools in the
-[mjbots](https://github.com/mjbots/) software stack.
+- [mpacklog](https://pypi.org/project/mpacklog/): parent project this viewer is designed for.
+- [moteus-gui](https://pypi.org/project/moteus-gui/): includes the fantastic ``tview`` telemetry GUI that ``mpackview`` derives from (the name is
+itself a reference).
