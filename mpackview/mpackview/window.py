@@ -11,7 +11,7 @@
 import asyncio
 import logging
 import os
-from typing import Any, Dict, List, Union
+from typing import Any, Union
 
 from PySide2 import QtUiTools
 from qtpy import QtCore, QtWidgets
@@ -123,10 +123,10 @@ class Window:
     def update_tree(
         self,
         item: QtWidgets.QTreeWidgetItem,
-        data: Union[Dict, List, Any],
-        node: Dict,
+        data: Union[dict, list, Any],
+        node: dict,
     ) -> None:
-        """Update tree structure in the left pane.
+        """Update the tree structure of the GUI left pane.
 
         Args:
             item: Tree widget item from the left GUI panel.
@@ -136,11 +136,14 @@ class Window:
             node: Node in the internal tree.
         """
         node["__item__"] = item
-        is_dict = isinstance(data, dict)
-        is_list = isinstance(data, list)
-        if not is_dict and not is_list:
+        if isinstance(data, dict):
+            keys = sorted(data.keys())
+            is_dict = True
+        elif isinstance(data, list):
+            keys = [str(i) for i, _ in enumerate(data)]
+            is_dict = False
+        else:  # not isinstance(data, (dict, list)):
             return
-        keys = sorted(data.keys()) if is_dict else map(str, range(len(data)))
         for index, key in enumerate(keys):
             if key not in node:
                 child = QtWidgets.QTreeWidgetItem(item)
@@ -148,7 +151,7 @@ class Window:
                 node[key] = {}
             else:  # item is already in the tree
                 child = node[key]["__item__"]
-            value = data[key] if is_dict else data[index]
+            value = data[key if is_dict else index]
             self.update_tree(child, value, node[key])
 
     def update_data(self, data, tree):
