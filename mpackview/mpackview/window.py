@@ -45,7 +45,7 @@ class Window:
 
     def __init__(self, stream_client: StreamClient, parent=None):
         current_script_dir = os.path.dirname(os.path.abspath(__file__))
-        uifilename = os.path.join(current_script_dir, "mpacklog.ui")
+        uifilename = os.path.join(current_script_dir, "mpackview.ui")
 
         loader = QtUiTools.QUiLoader()
         ui_file = QtCore.QFile(uifilename)  # noqa: E1101
