@@ -41,7 +41,7 @@ class Window:
         current_script_dir = os.path.dirname(os.path.abspath(__file__))
         uifilename = os.path.join(current_script_dir, "mpackview.ui")
 
-        loader = QtUiTools.QUiLoader()
+        loader = QtUiTools.QUiLoader()  # pylint: disable=c-extension-no-member
         ui_file = QtCore.QFile(uifilename)  # noqa: E1101
         ui_file.open(QtCore.QFile.ReadOnly)  # noqa: E1101
         self.ui = loader.load(ui_file, parent)
