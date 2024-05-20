@@ -68,7 +68,7 @@ class PlotWidget(QtWidgets.QWidget):
 
         self.left_axis = self.figure.add_subplot(111)
         self.left_axis.grid()
-        self.left_axis.fmt_xdata = lambda x: "%.3f" % x
+        self.left_axis.fmt_xdata = lambda x: f"{x:.3f}"
         self.left_axis.legend_loc = 3
         self.right_axis = None
 
@@ -159,5 +159,5 @@ class PlotWidget(QtWidgets.QWidget):
         """
         if event.key not in ["1", "2"]:
             return
-        for key, axis in self.__get_axes_keys():
+        for _, axis in self.__get_axes_keys():
             axis.set_navigate(True)
