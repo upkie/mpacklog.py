@@ -18,7 +18,7 @@
 
 - AsyncLogger: Wait for logger to stop properly
 
-## [3.1.0] - 2023/09/29
+## [3.1.0] - 2023-09-29
 
 ### Added
 
@@ -34,7 +34,7 @@
 - Unused script printer from CLI
 - Unused `finish` function from CLI printers
 
-## [3.0.0] - 2023/06/06
+## [3.0.0] - 2023-06-06
 
 ### Added
 
@@ -46,13 +46,13 @@
 - Rename ``Logger`` to ``AsyncLogger``
 - Remove unused ``mypy_integration``
 
-## [2.1.0] - 2023/04/26
+## [2.1.0] - 2023-04-26
 
 ### Changed
 
 - Make code compatible with macOS (thanks to @boragokbakan)
 
-## [2.0.0] - 2022/09/01
+## [2.0.0] - 2022-09-01
 
 ### Added
 
@@ -64,6 +64,6 @@
 - `mpacklog` command-line tool
 - Unit tests for Python API
 
-## [1.0.0] - 2022/08/17
+## [1.0.0] - 2022-08-17
 
 First release of the project.
