@@ -1,6 +1,6 @@
 # mpackview
 
-Watch and plot live updates from dictionaries serialized by MessagePack.
+Watch and plot live updates from dictionaries serialized with MessagePack and streamed with [mpacklog](https://pypi.org/project/mpacklog/).
 
 ## Installation
 
