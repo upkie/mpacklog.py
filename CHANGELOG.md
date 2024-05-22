@@ -67,3 +67,10 @@
 ## [1.0.0] - 2022-08-17
 
 First release of the project.
+
+[unreleased]: https://github.com/qpsolvers/qpsolvers/compare/v3.1.0...HEAD
+[3.1.0]: https://github.com/qpsolvers/qpsolvers/compare/v3.0.0...v3.1.0
+[3.0.0]: https://github.com/qpsolvers/qpsolvers/compare/v2.1.0...v3.0.0
+[2.1.0]: https://github.com/qpsolvers/qpsolvers/compare/v2.0.1...v2.1.0
+[2.0.0]: https://github.com/qpsolvers/qpsolvers/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/qpsolvers/qpsolvers/releases/tag/v1.0.0
