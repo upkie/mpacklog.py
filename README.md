@@ -83,6 +83,16 @@ $ mpacklog list my_log.mpack
 - foo/cbs
 ```
 
+### ``serve``
+
+The ``serve`` command watches a log file for updates and serves the last dictionary appended to it over the network. Its argument is either a log file or a directory containing log files. In the second case, the most recent log files in the directory is opened:
+
+```
+$ mpacklog serve /var/log/my_mpack_logs/
+```
+
+You can use [`mpackview`](https://pypi.org/project/mpackview) to connect a live plot to the server, or develop your own tool (the server API is quite simple).
+
 ## See also
 
 There are two fantastic tools to manipulate newline-delimited JSON logs from the command line:

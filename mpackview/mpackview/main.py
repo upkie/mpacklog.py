@@ -42,7 +42,7 @@ def parse_command_line_arguments() -> argparse.Namespace:
         Namespace resulting from parsing command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="Serve most recent values from a spine log.",
+        description="Serve most recent values from a log file.",
     )
     parser.add_argument(
         "destination",
