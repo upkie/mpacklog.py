@@ -2,6 +2,6 @@
 .coverage
 .tox
 __pycache__
-build
+_build
 coverage
 dist

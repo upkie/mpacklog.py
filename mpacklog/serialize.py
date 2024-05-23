@@ -8,7 +8,7 @@
 
 
 def serialize(obj):
-    """Serialize an object for message packing.
+    r"""Serialize an object for message packing.
 
     Args:
         obj: Object to serialize.
@@ -20,7 +20,8 @@ def serialize(obj):
         Calling the numpy conversion is much faster than the default list
         constructor:
 
-        ```python
+    .. code::
+
         In [1]: x = random.random(6)
 
         In [2]: %timeit list(x)
@@ -28,7 +29,6 @@ def serialize(obj):
 
         In [3]: %timeit x.tolist()
         117 ns ± 0.865 ns per loop (mean ± std. dev. of 7 runs, 1e7 loops each)
-        ```
     """
     if hasattr(obj, "tolist"):  # numpy.ndarray
         return obj.tolist()
