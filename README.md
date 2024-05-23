@@ -73,6 +73,16 @@ The ``dump`` command writes down a log file to [newline-delimited JSON](https://
 mpacklog dump my_log.mpack
 ```
 
+### ``list``
+
+This commands lists all nested dictionary keys encountered in a log file. Nested keys are separated by slashes ``/`` in the output. For instance, if some dictionaries in ``my_log.mpack`` contain values at ``dict["foo"]["bar"]`` and ``dict["foo"]["cbs"]``, the command will produce:
+
+```
+$ mpacklog list my_log.mpack
+- foo/bar
+- foo/cbs
+```
+
 ## See also
 
 There are two fantastic tools to manipulate newline-delimited JSON logs from the command line:
