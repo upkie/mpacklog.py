@@ -2,14 +2,23 @@
 
 [![Build](https://img.shields.io/github/actions/workflow/status/upkie/mpacklog.py/ci.yml?branch=main)](https://github.com/upkie/mpacklog.py/actions)
 [![Coverage](https://coveralls.io/repos/github/upkie/mpacklog.py/badge.svg?branch=main)](https://coveralls.io/github/upkie/mpacklog.py?branch=main)
+[![Conda version](https://anaconda.org/conda-forge/mpacklog/badges/version.svg)](https://anaconda.org/conda-forge/mpacklog)
 [![PyPI version](https://img.shields.io/pypi/v/mpacklog)](https://pypi.org/project/mpacklog/)
 
 Stream dictionaries to files or over the network using MessagePack in Python.
 
 ## Installation
 
+### From conda-forge
+
 ```console
-$ pip install mpacklog
+conda install -c conda-forge mpacklog
+```
+
+### From PyPI
+
+```console
+pip install mpacklog
 ```
 
 ## Usage
