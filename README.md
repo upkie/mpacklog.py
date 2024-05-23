@@ -63,19 +63,21 @@ logger.write()
 
 ## Command-line
 
-If you ``pip``-installed mpacklog, you can use the ``mpacklog`` command to dump logs to JSON:
+The ``mpacklog`` utility provides commands to manipulate ``.mpack`` files.
+
+### ``dump``
+
+The ``dump`` command writes down a log file to [newline-delimited JSON](https://jsonlines.org):
 
 ```console
 mpacklog dump my_log.mpack
 ```
 
-Alternatively and more generally, two great tools to manipulate logs from the command line are:
+## See also
 
-* [`rq`](https://github.com/dflemstr/rq): transform from/to MessagePack, JSON, YAML, TOML, ...
+There are two fantastic tools to manipulate newline-delimited JSON logs from the command line:
+
 * [`jq`](https://github.com/stedolan/jq): manipulate JSON series to add, remove or extend fields
+* [`rq`](https://github.com/dflemstr/rq): transform from/to MessagePack, JSON, YAML, TOML, ...
 
-For instance, ``mpacklog dump`` is equivalent to:
-
-```console
-rq -mJ < my_log.mpack
-```
+For instance, ``mpacklog dump`` is equivalent to ``rq -mJ < my_log.mpack``.
