@@ -1,6 +1,7 @@
 # mpacklog.py
 
 [![Build](https://img.shields.io/github/actions/workflow/status/upkie/mpacklog.py/ci.yml?branch=main)](https://github.com/upkie/mpacklog.py/actions)
+[![Documentation](https://img.shields.io/github/actions/workflow/status/upkie/mpacklog.py/docs.yml?branch=main&label=docs)](https://upkie.github.io/mpacklog.py/)
 [![Coverage](https://coveralls.io/repos/github/upkie/mpacklog.py/badge.svg?branch=main)](https://coveralls.io/github/upkie/mpacklog.py?branch=main)
 [![Conda version](https://img.shields.io/conda/vn/conda-forge/mpacklog.svg)](https://anaconda.org/conda-forge/mpacklog)
 [![PyPI version](https://img.shields.io/pypi/v/mpacklog)](https://pypi.org/project/mpacklog/)
