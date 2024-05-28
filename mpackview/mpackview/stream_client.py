@@ -27,7 +27,12 @@ class StreamClient:
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setblocking(False)
         server.settimeout(5.0)
-        server.connect((host, port))
+        try:
+            server.connect((host, port))
+        except ConnectionRefusedError as exn:
+            raise ConnectionRefusedError(
+                f'could not connect to "{host}" on port {port}'
+            ) from exn
         self.server = server
         self.unpacker = unpacker
 
