@@ -46,6 +46,8 @@ def parse_command_line_arguments() -> argparse.Namespace:
     )
     parser.add_argument(
         "destination",
+        nargs="?",
+        default="localhost",
         help="host name or IP address to connect to",
         type=str,
     )
