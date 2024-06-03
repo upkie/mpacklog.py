@@ -96,9 +96,7 @@ You can use [`mpackview`](https://pypi.org/project/mpackview) to connect a live 
 
 ## See also
 
-There are two fantastic tools to manipulate newline-delimited JSON logs from the command line:
-
-* [`jq`](https://github.com/stedolan/jq): manipulate JSON series to add, remove or extend fields
-* [`rq`](https://github.com/dflemstr/rq): transform from/to MessagePack, JSON, YAML, TOML, ...
-
-For instance, ``mpacklog dump`` is equivalent to ``rq -mJ < my_log.mpack``.
+* [foxplot](https://github.com/stephane-caron/foxplot): explore and plot time-series data from MessagePack and line-delimited JSON files.
+* [jq](https://github.com/stedolan/jq): manipulate JSON series to add, remove or extend fields.
+* [mpacklog.cpp](https://github.com/upkie/mpacklog.cpp): log dictionaries to MessagePack files in C++.
+* [rq](https://github.com/dflemstr/rq): transform from/to MessagePack, JSON, YAML, TOML, etc. For instance ``mpacklog dump`` is equivalent to ``rq -mJ < my_log.mpack``.
