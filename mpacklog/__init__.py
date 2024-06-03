@@ -10,10 +10,12 @@ __version__ = "3.1.0"
 
 from .async_logger import AsyncLogger
 from .log_server import LogServer
+from .read_log import read_log
 from .sync_logger import SyncLogger
 
 __all__ = [
     "AsyncLogger",
     "LogServer",
     "SyncLogger",
+    "read_log",
 ]
