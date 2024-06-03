@@ -6,6 +6,7 @@
 
 - AsyncLogger: flush function to empty the message queue to file
 - CLI: ``mpacklog serve`` sub-command
+- Example showing how to extend an existing log with new fields
 - GUI adapted from ``tview`` in [moteus-gui](https://pypi.org/project/moteus-gui/)
 - New ``read_log`` function to get dictionaries from an input log
 - Server class to stream data from a MessagePack log

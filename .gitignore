@@ -1,4 +1,3 @@
-*.mpack
 .coverage
 .tox
 __pycache__
