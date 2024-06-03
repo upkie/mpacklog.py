@@ -27,14 +27,14 @@ def get_argument_parser() -> argparse.ArgumentParser:
         Command-line argument parser.
     """
     main_parser = argparse.ArgumentParser(
-        description="Manipulate MessagePack log files."
+        description="Manipulate MessagePack log files"
     )
     subparsers = main_parser.add_subparsers(title="subcommands", dest="subcmd")
 
     # mpacklog dump -----------------------------------------------------------
     dump_parser = subparsers.add_parser(
         "dump",
-        help="Dump log file to the standard output.",
+        help="Dump log file as JSON Lines to the standard output",
     )
     dump_parser.add_argument(
         "logfile", metavar="logfile", help="log file to open"
@@ -55,13 +55,13 @@ def get_argument_parser() -> argparse.ArgumentParser:
     dump_parser.add_argument(
         "--output-dir",
         metavar="output_dir",
-        help="Output directory to write data and Python script to.",
+        help="Output directory to write data and Python script to",
     )
 
     # mpacklog list -----------------------------------------------------------
     list_parser = subparsers.add_parser(
         "list",
-        help="List fields in a log",
+        help="List all available fields encountered in log file",
     )
     list_parser.add_argument(
         "logfile", metavar="logfile", help="log file to open"
@@ -70,7 +70,7 @@ def get_argument_parser() -> argparse.ArgumentParser:
     # mpacklog serve ----------------------------------------------------------
     serve_parser = subparsers.add_parser(
         "serve",
-        help="Serve most recent values from a spine log.",
+        help="Serve most recent values from log file",
     )
     serve_parser.add_argument(
         "log_path",
