@@ -2,12 +2,13 @@
 
 ## Unreleased
 
+## [4.0.0] - 2024-06-07
+
 ### Added
 
 - AsyncLogger: flush function to empty the message queue to file
 - CLI: ``mpacklog serve`` sub-command
 - Example showing how to extend an existing log with new fields
-- GUI adapted from ``tview`` in [moteus-gui](https://pypi.org/project/moteus-gui/)
 - New ``read_log`` function to get dictionaries from an input log
 - Server class to stream data from a MessagePack log
 
@@ -70,7 +71,8 @@
 
 First release of the project.
 
-[unreleased]: https://github.com/upkie/mpacklog.py/compare/v3.1.0...HEAD
+[unreleased]: https://github.com/upkie/mpacklog.py/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/upkie/mpacklog.py/compare/v3.1.0...v4.0.0
 [3.1.0]: https://github.com/upkie/mpacklog.py/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/upkie/mpacklog.py/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/upkie/mpacklog.py/compare/v2.0.1...v2.1.0
