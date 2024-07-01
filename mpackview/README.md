@@ -1,11 +1,22 @@
 # mpackview
 
+[![Conda version](https://img.shields.io/conda/vn/conda-forge/mpackview.svg)](https://anaconda.org/conda-forge/mpackview)
+[![PyPI version](https://img.shields.io/pypi/v/mpackview)](https://pypi.org/project/mpackview/)
+
 Watch and plot live updates from dictionaries serialized with MessagePack and streamed with [mpacklog](https://pypi.org/project/mpacklog/).
 
 ## Installation
 
+### From conda-forge
+
 ```console
-$ pip install mpackview
+conda install -c conda-forge mpacklog
+```
+
+### From PyPI
+
+```console
+pip install mpackview
 ```
 
 ## Usage
