@@ -36,6 +36,7 @@ keywords = ["messagepack", "serialization", "logging"]
 mpacklog = "mpacklog.cli:main"
 
 [project.urls]
+Homepage = "https://github.com/upkie/mpacklog.py"
 Source = "https://github.com/upkie/mpacklog.py"
 Tracker = "https://github.com/upkie/mpacklog.py/issues"
 Changelog = "https://github.com/upkie/mpacklog.py/blob/master/CHANGELOG.md"
@@ -46,7 +47,7 @@ line-length = 79
 [tool.ruff]
 line-length = 79
 
-[tool.lint]
+[tool.ruff.lint]
 select = [
     # pyflakes
     "F",
@@ -63,5 +64,5 @@ ignore = [
     "D405",  # British-style section names are also "proper"!
 ]
 
-[tool.lint.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
