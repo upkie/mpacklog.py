@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2024 Inria
 
+"""Read dictionaries in series from a log file."""
+
 from typing import Generator
 
 import msgpack

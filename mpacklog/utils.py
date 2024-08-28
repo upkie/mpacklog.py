@@ -15,7 +15,7 @@ def find_log_file(log_path: str) -> str:
     """Find log file to open.
 
     Args:
-        log_file: Path to a directory or a specific log file.
+        log_path: Path to a directory or a specific log file.
     """
     if os.path.exists(log_path):
         if os.path.isfile(log_path):
