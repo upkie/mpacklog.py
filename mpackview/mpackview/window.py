@@ -38,6 +38,12 @@ class Window:
     tree: dict
 
     def __init__(self, stream_client: StreamClient, parent=None):
+        """Initialize window.
+
+        Attributes:
+            stream_client: Client to read streaming data from.
+            parent: Optional parent Qt widget.
+        """
         current_script_dir = os.path.dirname(os.path.abspath(__file__))
         uifilename = os.path.join(current_script_dir, "mpackview.ui")
 
