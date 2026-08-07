@@ -108,7 +108,7 @@ This command processes files created with delta encoding, where each entry conta
 
 ## See also
 
-* [foxplot](https://github.com/stephane-caron/foxplot): explore and plot time-series data from MessagePack and line-delimited JSON files.
+* [foxplot](https://codeberg.org/stephane-caron/foxplot): explore and plot time-series data from MessagePack and line-delimited JSON files.
 * [jq](https://github.com/stedolan/jq): manipulate JSON series to add, remove or extend fields.
 * [moteus-gui](https://pypi.org/project/moteus-gui/): motor driver telemetry GUI from which `mpackview` was derived
 * [mpacklog.cpp](https://github.com/stephane-caron/mpacklog.cpp): log dictionaries to MessagePack files in C++.
